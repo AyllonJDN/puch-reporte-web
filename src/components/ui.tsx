@@ -1,0 +1,309 @@
+import { useEffect, useState } from 'react'
+import type { ReactElement, ReactNode } from 'react'
+import { animate, motion, useReducedMotion } from 'framer-motion'
+import { useInView } from 'react-intersection-observer'
+import { ResponsiveContainer } from 'recharts'
+import { nf } from '../lib/stats'
+
+export const C = {
+  base: '#F5F0EB',
+  ink: '#1A1A2E',
+  arena: '#C4A882',
+  menta: '#A8D5BA',
+  rosa: '#F2A7A7',
+  lavanda: '#B8C8E8',
+  sec: '#5C5C5C',
+  ter: '#9A9A9A',
+  sand: '#E4DDD3',
+}
+
+/* ---------- Estilos compartidos de gráficos ---------- */
+const tick = { fontFamily: 'Inter, sans-serif', fontSize: 11, fill: C.ter }
+export const xAxis = { tick, tickLine: false, axisLine: { stroke: 'rgba(26,26,46,.15)' } } as const
+export const yAxis = {
+  tick,
+  tickLine: false,
+  axisLine: false,
+  width: 48,
+  tickFormatter: (v: number) => nf(v),
+} as const
+export const grid = { vertical: false, strokeDasharray: '3 3', stroke: 'rgba(26,26,46,.08)' } as const
+export const legendProps = {
+  verticalAlign: 'bottom',
+  iconType: 'circle',
+  iconSize: 8,
+  wrapperStyle: { fontSize: 12, fontFamily: 'DM Sans, sans-serif', color: C.sec, paddingTop: 12 },
+} as const
+export const cursorFill = { fill: 'rgba(26,26,46,.04)' }
+
+export function useAnim() {
+  const reduce = useReducedMotion()
+  return { isAnimationActive: !reduce, animationDuration: 1000, animationEasing: 'ease-out' } as const
+}
+
+/* ---------- Estructura ---------- */
+export function Reveal({
+  children,
+  className,
+  delay = 0,
+}: {
+  children: ReactNode
+  className?: string
+  delay?: number
+}) {
+  const reduce = useReducedMotion()
+  return (
+    <motion.div
+      className={className}
+      initial={reduce ? false : { opacity: 0, y: 24 }}
+      whileInView={{ opacity: 1, y: 0 }}
+      viewport={{ once: true, margin: '-40px' }}
+      transition={{ duration: 0.6, delay }}
+    >
+      {children}
+    </motion.div>
+  )
+}
+
+export function Section({
+  id,
+  num,
+  label,
+  title,
+  dark,
+  alt,
+  children,
+}: {
+  id: string
+  num: string
+  label: string
+  title: string
+  dark?: boolean
+  alt?: boolean
+  children: ReactNode
+}) {
+  return (
+    <section id={id} className={`relative scroll-mt-16 py-16 md:py-24 ${dark ? 'bg-ink text-white' : alt ? 'bg-white/60' : ''}`}>
+      <div className="mx-auto max-w-[1200px] px-4 sm:px-6">
+        <Reveal>
+          <p className="flex items-center gap-3 font-sans text-xs uppercase tracking-[.2em] text-arena">
+            <span className="font-num text-[11px] font-semibold">{num}</span>
+            <span className="h-px w-10 bg-arena/60" />
+            {label}
+          </p>
+          <h2
+            className={`mt-4 max-w-4xl font-display text-[28px] font-semibold leading-tight md:text-[40px] ${
+              dark ? 'text-white' : 'text-ink'
+            }`}
+          >
+            {title}
+          </h2>
+        </Reveal>
+        <Reveal className="mt-10 space-y-6 md:mt-14 md:space-y-8">{children}</Reveal>
+      </div>
+    </section>
+  )
+}
+
+export function Card({
+  children,
+  className = '',
+  large,
+}: {
+  children: ReactNode
+  className?: string
+  large?: boolean
+}) {
+  return (
+    <div
+      className={`min-w-0 border border-ink/[.06] bg-white shadow-card ${
+        large ? 'rounded-3xl p-5 sm:p-8' : 'rounded-2xl p-5 sm:p-6'
+      } ${className}`}
+    >
+      {children}
+    </div>
+  )
+}
+
+export function CardTitle({ children }: { children: ReactNode }) {
+  return <h3 className="mb-4 font-sans text-base font-bold text-ink">{children}</h3>
+}
+
+export function Source({ children, dark }: { children: ReactNode; dark?: boolean }) {
+  return <p className={`mt-4 text-sm italic ${dark ? 'text-white/60' : 'text-ter'}`}>{children}</p>
+}
+
+/* ---------- Números ---------- */
+export function Num({
+  value,
+  decimals = 0,
+  prefix = '',
+  suffix = '',
+}: {
+  value: number | null
+  decimals?: number
+  prefix?: string
+  suffix?: string
+}) {
+  const reduce = useReducedMotion()
+  const { ref, inView } = useInView({ triggerOnce: true, threshold: 0.3 })
+  const [shown, setShown] = useState(0)
+  useEffect(() => {
+    if (!inView || value == null || reduce) return
+    const c = animate(0, value, { duration: 1.6, ease: 'easeOut', onUpdate: setShown })
+    return () => c.stop()
+  }, [inView, value, reduce])
+  if (value == null) return <span>—</span>
+  const fmt = (n: number) => `${prefix}${nf(n, decimals)}${suffix}`
+  return <span ref={ref}>{reduce ? fmt(value) : fmt(inView ? shown : 0)}</span>
+}
+
+export function Delta({ v, children }: { v: number; children?: ReactNode }) {
+  const up = v >= 0
+  return (
+    <span
+      className={`inline-flex items-center gap-1 rounded-md px-1.5 py-0.5 font-num text-[11px] font-semibold text-ink ${
+        up ? 'bg-menta/70' : 'bg-rosa/70'
+      }`}
+    >
+      {up ? '▲' : '▼'} {children ?? `${nf(Math.abs(v), 1)} %`}
+    </span>
+  )
+}
+
+export function Kpi({
+  value,
+  text,
+  decimals,
+  prefix,
+  suffix,
+  label,
+  sub,
+  delta,
+  tone = 'arena',
+  className = '',
+}: {
+  value?: number | null
+  text?: string
+  decimals?: number
+  prefix?: string
+  suffix?: string
+  label: string
+  sub?: ReactNode
+  delta?: ReactNode
+  tone?: 'arena' | 'menta' | 'lavanda' | 'rosa'
+  className?: string
+}) {
+  const bar = { arena: 'bg-arena', menta: 'bg-menta', lavanda: 'bg-lavanda', rosa: 'bg-rosa' }[tone]
+  return (
+    <Card className={`relative overflow-hidden ${className}`}>
+      <span className={`absolute inset-y-0 left-0 w-1 ${bar}`} aria-hidden />
+      <p className="font-sans text-[11px] font-bold uppercase tracking-[.14em] text-sec">{label}</p>
+      <div className="mt-3 flex flex-wrap items-end gap-x-3 gap-y-1">
+        <span className="break-words font-display text-4xl font-semibold leading-none text-ink md:text-[44px]">
+          {text ?? <Num value={value ?? null} decimals={decimals} prefix={prefix} suffix={suffix} />}
+        </span>
+        {delta}
+      </div>
+      {sub && <p className="mt-3 border-t border-ink/[.07] pt-3 font-sans text-[13px] leading-snug text-sec">{sub}</p>}
+    </Card>
+  )
+}
+
+/* ---------- Controles ---------- */
+export function Segmented<T extends string>({
+  options,
+  value,
+  onChange,
+  label,
+}: {
+  options: { v: T; l: string }[]
+  value: T
+  onChange: (v: T) => void
+  label: string
+}) {
+  return (
+    <div role="group" aria-label={label} className="inline-flex max-w-full flex-wrap gap-1 rounded-full bg-base p-1">
+      {options.map((o) => (
+        <button
+          key={o.v}
+          type="button"
+          aria-pressed={value === o.v}
+          onClick={() => onChange(o.v)}
+          className={`rounded-full px-4 py-1.5 font-sans text-sm transition-colors ${
+            value === o.v ? 'bg-ink text-white' : 'text-sec hover:text-ink'
+          }`}
+        >
+          {o.l}
+        </button>
+      ))}
+    </div>
+  )
+}
+
+export function Tag({ children, tone }: { children: ReactNode; tone: 'menta' | 'lavanda' | 'arena' | 'rosa' }) {
+  const bg = { menta: 'bg-menta', lavanda: 'bg-lavanda', arena: 'bg-arena', rosa: 'bg-rosa' }[tone]
+  return (
+    <span className={`inline-block whitespace-nowrap rounded-full px-2.5 py-0.5 font-sans text-xs font-medium text-ink ${bg}`}>
+      {children}
+    </span>
+  )
+}
+
+/* ---------- Gráficos ---------- */
+export function ChartBox({
+  label,
+  className = 'h-[240px] sm:h-[340px]',
+  children,
+}: {
+  label: string
+  className?: string
+  children: ReactElement
+}) {
+  const { ref, inView } = useInView({ triggerOnce: true, threshold: 0.1 })
+  return (
+    <div ref={ref} role="img" aria-label={label} className={`w-full min-w-0 ${className}`}>
+      {inView && (
+        <ResponsiveContainer width="100%" height="100%">
+          {children}
+        </ResponsiveContainer>
+      )}
+    </div>
+  )
+}
+
+interface TipProps {
+  active?: boolean
+  payload?: any[]
+  label?: any
+  fmt?: (v: number, name: string) => string
+  head?: (label: any, row: any) => ReactNode
+  foot?: (row: any) => ReactNode
+}
+
+export function Tip({ active, payload, label, fmt, head, foot }: TipProps) {
+  if (!active || !payload?.length) return null
+  const row = payload[0].payload
+  return (
+    <div className="max-w-[260px] rounded-xl bg-white p-3 font-sans text-xs shadow-card">
+      <p className="mb-1.5 font-bold text-ink">{head ? head(label, row) : label}</p>
+      {payload
+        .filter((p) => p.value != null && p.name != null)
+        .map((p, i) => (
+          <p key={i} className="flex items-center gap-2 text-sec">
+            <span className="h-2 w-2 shrink-0 rounded-full" style={{ background: p.color ?? p.fill ?? p.stroke }} />
+            <span>{p.name}:</span>
+            <span className="ml-auto pl-3 font-num font-medium text-ink">
+              {fmt ? fmt(p.value, p.name) : nf(p.value)}
+            </span>
+          </p>
+        ))}
+      {foot && <div className="mt-1.5 border-t border-ink/10 pt-1.5 text-sec">{foot(row)}</div>}
+    </div>
+  )
+}
+
+/** Filas con separadores sutiles y zebra, sin bordes gruesos. */
+export function ZebraRow({ children, i, className = '' }: { children: ReactNode; i: number; className?: string }) {
+  return <div className={`px-3 py-3 sm:px-4 ${i % 2 ? 'bg-base' : 'bg-white'} ${className}`}>{children}</div>
+}

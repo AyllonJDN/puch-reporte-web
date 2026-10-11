@@ -1,0 +1,57 @@
+@import "tailwindcss";
+
+@theme {
+  --color-base: #F5F0EB;
+  --color-ink: #1A1A2E;
+  --color-arena: #C4A882;
+  --color-menta: #A8D5BA;
+  --color-rosa: #F2A7A7;
+  --color-lavanda: #B8C8E8;
+  --color-sec: #5C5C5C;
+  --color-ter: #9A9A9A;
+  --color-sand: #E4DDD3;
+  --font-display: 'Playfair Display', Georgia, serif;
+  --font-sans: 'DM Sans', system-ui, sans-serif;
+  --font-num: 'Inter', system-ui, sans-serif;
+  --shadow-card: 0 4px 24px rgba(0, 0, 0, 0.08);
+}
+
+html { scroll-behavior: smooth; }
+/* Cifras alineadas (lining + tabular) para lectura tipo terminal de datos */
+.font-display, .font-num, .tnum { font-feature-settings: 'lnum' 1, 'tnum' 1; font-variant-numeric: lining-nums tabular-nums; }
+.grid-dots {
+  background-image: radial-gradient(rgba(196,168,130,.22) 1px, transparent 1px);
+  background-size: 28px 28px;
+}
+.grid-lines {
+  background-image:
+    linear-gradient(rgba(26,26,46,.045) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(26,26,46,.045) 1px, transparent 1px);
+  background-size: 56px 56px;
+}
+@keyframes marquee { from { transform: translateX(0); } to { transform: translateX(-50%); } }
+.marquee { animation: marquee 48s linear infinite; }
+.marquee:hover { animation-play-state: paused; }
+@media (prefers-reduced-motion: reduce) { .marquee { animation: none; } }
+body {
+  margin: 0;
+  background: #F5F0EB;
+  color: #1A1A2E;
+  font-family: var(--font-sans);
+  overflow-x: clip;
+  -webkit-font-smoothing: antialiased;
+}
+:focus-visible { outline: 2px solid #C4A882; outline-offset: 3px; border-radius: 4px; }
+.recharts-wrapper, .recharts-surface { outline: none; }
+.recharts-bar-rectangle:hover { opacity: 0.8; }
+select { font-family: inherit; }
+
+@media (prefers-reduced-motion: reduce) {
+  html { scroll-behavior: auto; }
+}
+
+@media print {
+  body { background: #fff; }
+  nav, .no-print { display: none !important; }
+  section { break-inside: avoid; padding-top: 24px !important; padding-bottom: 24px !important; background: #fff !important; color: #1A1A2E !important; }
+}
