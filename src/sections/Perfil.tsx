@@ -1,5 +1,5 @@
 import { motion, useReducedMotion } from 'framer-motion'
-import { BadgeCheck, Building2, Play } from 'lucide-react'
+import { ArrowUpRight, BadgeCheck, Building2, Play } from 'lucide-react'
 import { Card, Section, Source } from '../components/ui'
 
 const tiles = [
@@ -28,7 +28,6 @@ export default function Perfil() {
       id="perfil"
       num="00"
       label="El protagonista"
-      title="Sergio Puch lleva el corretaje inmobiliario al video vertical: plano medio, una idea por pieza y el gancho en pantalla"
     >
       <div className="grid gap-6 lg:grid-cols-[.9fr_1.1fr]">
         <Card large className="relative overflow-hidden">
@@ -58,6 +57,14 @@ export default function Perfil() {
               </div>
             ))}
           </div>
+          <a
+            href="https://www.instagram.com/puch_realtor/"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="mt-5 inline-flex items-center gap-2 rounded-full bg-ink px-5 py-2.5 font-sans text-sm font-bold text-white transition-colors hover:bg-ink/85"
+          >
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" aria-hidden><rect x="3" y="3" width="18" height="18" rx="5" /><circle cx="12" cy="12" r="4" /><circle cx="17.5" cy="6.5" r=".8" fill="currentColor" /></svg> Ver perfil en Instagram <ArrowUpRight size={14} />
+          </a>
           <Source>Fuente: captura del perfil público de Instagram y TikTok.</Source>
         </Card>
 

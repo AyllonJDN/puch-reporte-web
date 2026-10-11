@@ -61,9 +61,9 @@ export default function Historial() {
       title="Las últimas 6 semanas aportan 17 % de las vistas acumuladas: la primera mitad las superó casi cinco veces"
     >
       <div className="grid gap-4 sm:grid-cols-3">
-        <Kpi value={A.vistas} label="Semanas 1 a 6" sub="Vistas combinadas" tone="arena" />
+        <Kpi value={A.vistas} label="Semanas 1 a 6" sub="Vistas combinadas" tone="arena" hint="Se comparan dos bloques iguales de 6 semanas para ver cómo evolucionó el rendimiento." />
         <Kpi value={B.vistas} label="Semanas 7 a 12" sub="Vistas combinadas" tone="lavanda" delta={<Delta v={pc(A.vistas, B.vistas)} />} />
-        <Kpi value={share} decimals={1} suffix=" %" label="Aporte de la segunda mitad" sub="Del total de 132.920 vistas" tone="rosa" />
+        <Kpi value={share} decimals={1} suffix=" %" label="Aporte de la segunda mitad" sub="Del total de 132.920 vistas" tone="rosa" hint="Si el aporte fuera parejo sería 50 %. Un valor menor confirma que el volumen se concentró al inicio." />
       </div>
 
       <div className="grid gap-6 lg:grid-cols-2">

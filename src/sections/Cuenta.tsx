@@ -21,10 +21,10 @@ export default function Cuenta() {
       title="La cuenta alcanza 4 espectadores por cada seguidor y casi 4 de cada 10 vistas son de personas nuevas"
     >
       <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
-        <Kpi value={a.vistas} label="Vistas (90 días)" sub={`Instagram ${nf(a.vistasIG)} · Facebook ${nf(a.vistasFB)}`} />
-        <Kpi value={a.espectadores} label="Espectadores únicos" sub="4 por cada seguidor" />
-        <Kpi value={a.seguidores} label="Seguidores" sub={`${nf(a.pctSeguidores, 1)} % de las vistas`} />
-        <Kpi value={a.visitasPerfil} label="Visitas al perfil" sub={`${nf(a.pctNoSeguidores, 1)} % de las vistas son de no seguidores`} />
+        <Kpi value={a.vistas} label="Vistas (90 días)" sub={`Instagram ${nf(a.vistasIG)} · Facebook ${nf(a.vistasFB)}`} hint="Cuenta cada reproducción, aunque la misma persona vea el contenido varias veces." />
+        <Kpi value={a.espectadores} label="Espectadores únicos" sub="4 por cada seguidor" tone="menta" hint="Personas distintas alcanzadas. Si superan a los seguidores, el contenido llega más allá de la comunidad propia." />
+        <Kpi value={a.seguidores} label="Seguidores" sub={`${nf(a.pctSeguidores, 1)} % de las vistas`} tone="lavanda" hint="Base de personas que ya eligieron seguir la cuenta; generan el 61,3 % de las vistas." />
+        <Kpi value={a.visitasPerfil} label="Visitas al perfil" sub={`${nf(a.pctNoSeguidores, 1)} % de las vistas son de no seguidores`} tone="rosa" hint="El porcentaje de no seguidores mide el descubrimiento: casi 4 de cada 10 vistas llegan a personas nuevas." />
       </div>
       <div className="grid gap-6 lg:grid-cols-2">
         <Card large>

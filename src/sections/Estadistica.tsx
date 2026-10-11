@@ -76,8 +76,8 @@ export default function Estadistica() {
               Una carta de control marca la media y una banda de ±1 desviación estándar: lo que cae fuera de ella es una semana excepcional.
             </p>
           </Card>
-          <Kpi value={r} decimals={2} label="Correlación entre publicaciones y vistas" sub="Más piezas por semana se asocian a más vistas" />
-          <Kpi value={below || null} label="Semanas bajo la media − 1 desviación" sub="Ninguna" />
+          <Kpi value={r} decimals={2} label="Correlación entre publicaciones y vistas" sub="Más piezas por semana se asocian a más vistas" tone="menta" hint="La correlación va de −1 a 1. Un valor de 0,57 indica una relación moderada y positiva; no prueba que publicar más cause más vistas." />
+          <Kpi value={below || null} label="Semanas bajo la media − 1 desviación" sub="Ninguna" tone="lavanda" hint="Marcaría una semana inusualmente baja. Como ese límite es negativo, ninguna semana puede caer por debajo." />
         </div>
       </div>
       <Card large>
@@ -90,6 +90,9 @@ export default function Estadistica() {
             </ZebraRow>
           ))}
         </div>
+        <p className="mt-4 font-sans text-xs leading-relaxed text-sec">
+          Media: promedio simple. Mediana: valor central, menos sensible a los picos. Desviación estándar: cuánto se alejan las semanas del promedio. Coeficiente de variación (CV): esa desviación como porcentaje del promedio; cuanto mayor, más irregular la serie.
+        </p>
       </Card>
     </Section>
   )

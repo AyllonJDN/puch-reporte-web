@@ -37,11 +37,11 @@ export default function Interaccion() {
       title="La interacción es de 1,40 % sobre las vistas; los compartidos aportan 21 % y son la señal más valiosa"
     >
       <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-5">
-        <Kpi value={tot} label="Interacciones" sub="1,40 % de las vistas" className="sm:col-span-2 lg:col-span-1" />
-        <Kpi value={likes} label="Me gusta" />
-        <Kpi value={com} label="Comentarios" />
-        <Kpi value={guard} label="Guardados" />
-        <Kpi value={comp} label="Compartidos" sub={`${nf(Math.round((comp / tot) * 100))} % del total`} />
+        <Kpi value={tot} label="Interacciones" sub="1,40 % de las vistas" className="sm:col-span-2 lg:col-span-1" hint="Suma de me gusta, comentarios, guardados y compartidos. La tasa de 1,40 % es interacciones divididas entre vistas." />
+        <Kpi value={likes} label="Me gusta" tone="menta" hint="Señal de agrado: es la más fácil de dar y la menos comprometida." />
+        <Kpi value={com} label="Comentarios" tone="lavanda" hint="Señal de conversación: el tema generó interés suficiente para escribir." />
+        <Kpi value={guard} label="Guardados" tone="menta" hint="Señal de utilidad: la persona quiere volver a ver el contenido." />
+        <Kpi value={comp} label="Compartidos" sub={`${nf(Math.round((comp / tot) * 100))} % del total`} tone="rosa" hint="La señal más valiosa: cada compartido lleva el reel a personas nuevas." />
       </div>
 
       <Card large>

@@ -16,7 +16,6 @@ import Guiones from './sections/Guiones'
 import Plan from './sections/Plan'
 import Cruce from './sections/Cruce'
 import Recomendaciones from './sections/Recomendaciones'
-import Metodologia from './sections/Metodologia'
 
 export default function App() {
   return (
@@ -41,7 +40,6 @@ export default function App() {
         <Plan />
         <Cruce />
         <Recomendaciones />
-        <Metodologia />
       </main>
       <Footer />
     </MotionConfig>

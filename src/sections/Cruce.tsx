@@ -55,6 +55,7 @@ export default function Cruce() {
           text={groups.map((g) => g.n).join(' · ')}
           label="Reels con guion · sin guion · listados"
           sub={`${alta} coincidencias altas y ${prob} probables`}
+          hint="Coincidencia alta: título y gancho casi idénticos al guion. Probable: mismo tema, redacción distinta; es una inferencia."
         />
         <Card>
           <p className="font-sans text-sm leading-relaxed text-sec">

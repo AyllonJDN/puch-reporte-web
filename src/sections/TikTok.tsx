@@ -1,31 +1,30 @@
-import { useMemo, useState } from 'react'
-import { ArrowDownUp } from 'lucide-react'
 import { Bar, BarChart, CartesianGrid, Cell, Tooltip, XAxis, YAxis } from 'recharts'
 import { tiktok, tiktokProfile } from '../data/report'
-import { C, Card, CardTitle, ChartBox, Kpi, Section, Segmented, Source, Tip, ZebraRow, cursorFill, grid, useAnim, xAxis, yAxis } from '../components/ui'
+import PieceList from '../components/PieceList'
+import type { Piece } from '../components/PieceList'
+import { C, Card, CardTitle, ChartBox, Kpi, Section, Source, Tip, cursorFill, grid, useAnim, xAxis, yAxis } from '../components/ui'
 import { dlong, dm, median, nf, snip, sum } from '../lib/stats'
-
-type Key = 'f' | 'vistas' | 'likes' | 'com' | 'guard'
-const cols: { k: Exclude<Key, 'f'>; l: string }[] = [
-  { k: 'vistas', l: 'Vistas' },
-  { k: 'likes', l: 'Me gusta' },
-  { k: 'com', l: 'Comentarios' },
-  { k: 'guard', l: 'Guardados' },
-]
 
 export default function TikTok() {
   const anim = useAnim()
-  const [key, setKey] = useState<Key>('f')
-  const [desc, setDesc] = useState(false)
   const views = tiktok.map((t) => t.vistas)
   const total = sum(views)
   const max = Math.max(...views)
   const inter = sum(tiktok.map((t) => t.likes + t.com + t.guard))
   const data = tiktok.map((t, i) => ({ i, ...t }))
-  const sorted = useMemo(() => {
-    const out = [...tiktok].sort((a, b) => (a[key] > b[key] ? 1 : a[key] < b[key] ? -1 : 0))
-    return desc ? out.reverse() : out
-  }, [key, desc])
+  const pieces: Piece[] = tiktok.map((t, i) => ({
+    id: `${i}`,
+    f: t.f,
+    texto: t.texto,
+    vistas: t.vistas,
+    metrics: [
+      ['Vistas', nf(t.vistas)],
+      ['Me gusta', nf(t.likes)],
+      ['Comentarios', nf(t.com)],
+      ['Guardados', nf(t.guard)],
+      ['Interacción', `${nf(((t.likes + t.com + t.guard) / t.vistas) * 100, 2)} %`],
+    ],
+  }))
 
   return (
     <Section
@@ -56,47 +55,26 @@ export default function TikTok() {
       </Card>
 
       <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-        <Kpi value={total} label="Vistas" sub={`${tiktok.length} videos (mediana ${nf(median(views))})`} />
-        <Kpi value={Math.round((max / total) * 100)} suffix=" %" label="En el video del 16 de julio" sub={`${nf(max)} vistas`} />
-        <Kpi value={(inter / total) * 100} decimals={1} suffix=" %" label="Interacción sobre vistas" sub="Sin compartidos, que TikTok no expone sin sesión" />
-        <Kpi value={3} label="Semanas sin publicar" sub="Del 7 al 27 de septiembre · último video: 2 de octubre" />
-        <Kpi value={tiktokProfile.seguidores} label="Seguidores en TikTok" />
+        <Kpi value={total} label="Vistas" sub={`${tiktok.length} videos (mediana ${nf(median(views))})`} hint="La mediana es el valor central: la mitad de los videos obtuvo menos de 739 vistas. Describe lo habitual mejor que el promedio." />
+        <Kpi value={Math.round((max / total) * 100)} suffix=" %" label="En el video del 16 de julio" sub={`${nf(max)} vistas`} tone="lavanda" hint="Un solo video concentra dos tercios del total: sin él, el canal rinde mucho menos y el resultado es difícil de repetir." />
+        <Kpi value={(inter / total) * 100} decimals={1} suffix=" %" label="Interacción sobre vistas" sub="Sin compartidos, que TikTok no expone sin sesión" tone="menta" hint="Mide cuántos espectadores reaccionan: me gusta, comentarios y guardados entre cada 100 vistas." />
+        <Kpi value={3} label="Semanas sin publicar" sub="Del 7 al 27 de septiembre · último video: 2 de octubre" tone="rosa" hint="Las pausas largas frenan al algoritmo: al volver a publicar, la cuenta parte con menos impulso." />
+        <Kpi value={tiktokProfile.seguidores} label="Seguidores en TikTok" sub="113 vistas por seguidor en la ventana" hint="Con una comunidad pequeña, el alcance depende del algoritmo y no de los seguidores: por eso un solo video puede disparar la cifra." />
       </div>
 
-      <div>
-        <div className="mb-4 flex flex-wrap items-center gap-3">
-          <span className="font-sans text-sm text-sec">Ordenar por</span>
-          <Segmented
-            label="Ordenar videos"
-            value={key}
-            onChange={(k) => {
-              setKey(k)
-              setDesc(k !== 'f')
-            }}
-            options={[{ v: 'f', l: 'Fecha' }, ...cols.map((c) => ({ v: c.k, l: c.l }))]}
-          />
-          <button type="button" onClick={() => setDesc(!desc)} className="flex items-center gap-1.5 rounded-full bg-white px-3 py-2 text-sm text-sec shadow-card">
-            <ArrowDownUp size={14} /> {desc ? 'Mayor a menor' : 'Menor a mayor'}
-          </button>
-        </div>
-        <div className="overflow-hidden rounded-2xl shadow-card">
-          {sorted.map((t, i) => (
-            <ZebraRow key={t.f + t.vistas} i={i} className="grid gap-x-4 gap-y-2 md:grid-cols-[72px_1fr_repeat(4,80px)] md:items-center">
-              <span className="font-num text-xs font-semibold text-ink">{dlong(t.f)}</span>
-              <span className="font-sans text-sm text-ink">{snip(t.texto)}</span>
-              <div className="grid grid-cols-4 gap-2 md:contents">
-                {cols.map((c) => (
-                  <div key={c.k} className="md:text-right">
-                    <p className="font-sans text-[11px] text-ter md:hidden">{c.l}</p>
-                    <p className="font-num text-xs font-semibold text-ink">{nf(t[c.k])}</p>
-                  </div>
-                ))}
-              </div>
-            </ZebraRow>
-          ))}
-        </div>
-        <Source>TikTok no expone compartidos sin sesión iniciada; su tasa no es estrictamente comparable con la de Instagram.</Source>
-      </div>
+      <PieceList
+        noun="videos"
+        accent={C.lavanda}
+        items={pieces}
+        sorts={[
+          { v: 'vistas', l: 'Vistas', get: (p) => p.vistas },
+          { v: 'f', l: 'Fecha', get: (p) => p.f },
+          { v: 'likes', l: 'Me gusta', get: (p) => tiktok[+p.id].likes },
+          { v: 'com', l: 'Comentarios', get: (p) => tiktok[+p.id].com },
+        ]}
+        initial={6}
+      />
+      <Source>TikTok no expone compartidos sin sesión iniciada; su tasa no es estrictamente comparable con la de Instagram.</Source>
     </Section>
   )
 }

@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react'
 import type { ReactElement, ReactNode } from 'react'
 import { animate, motion, useReducedMotion } from 'framer-motion'
+import { Info } from 'lucide-react'
 import { useInView } from 'react-intersection-observer'
 import { ResponsiveContainer } from 'recharts'
 import { nf } from '../lib/stats'
@@ -70,6 +71,7 @@ export function Section({
   num,
   label,
   title,
+  lede,
   dark,
   alt,
   children,
@@ -77,29 +79,41 @@ export function Section({
   id: string
   num: string
   label: string
-  title: string
+  title?: string
+  lede?: string
   dark?: boolean
   alt?: boolean
   children: ReactNode
 }) {
   return (
-    <section id={id} className={`relative scroll-mt-16 py-16 md:py-24 ${dark ? 'bg-ink text-white' : alt ? 'bg-white/60' : ''}`}>
-      <div className="mx-auto max-w-[1200px] px-4 sm:px-6">
+    <section id={id} className={`relative scroll-mt-16 overflow-hidden py-16 md:py-24 ${dark ? 'bg-ink text-white' : alt ? 'bg-white/60' : ''}`}>
+      <span
+        aria-hidden
+        className={`pointer-events-none absolute -top-2 right-2 select-none font-display text-[120px] font-semibold leading-none md:right-10 md:text-[200px] ${
+          dark ? 'text-white/[.04]' : 'text-arena/[.14]'
+        }`}
+      >
+        {num}
+      </span>
+      <div className="relative mx-auto max-w-[1200px] px-4 sm:px-6">
         <Reveal>
           <p className="flex items-center gap-3 font-sans text-xs uppercase tracking-[.2em] text-arena">
             <span className="font-num text-[11px] font-semibold">{num}</span>
             <span className="h-px w-10 bg-arena/60" />
             {label}
           </p>
-          <h2
-            className={`mt-4 max-w-4xl font-display text-[28px] font-semibold leading-tight md:text-[40px] ${
-              dark ? 'text-white' : 'text-ink'
-            }`}
-          >
-            {title}
-          </h2>
+          {title && (
+            <h2
+              className={`mt-4 max-w-4xl font-display text-[28px] font-semibold leading-tight md:text-[40px] ${
+                dark ? 'text-white' : 'text-ink'
+              }`}
+            >
+              {title}
+            </h2>
+          )}
+          {lede && <p className={`mt-4 max-w-2xl font-sans text-base leading-relaxed ${dark ? 'text-white/70' : 'text-sec'}`}>{lede}</p>}
         </Reveal>
-        <Reveal className="mt-10 space-y-6 md:mt-14 md:space-y-8">{children}</Reveal>
+        <Reveal className="mt-10 space-y-6 md:mt-12 md:space-y-8">{children}</Reveal>
       </div>
     </section>
   )
@@ -158,6 +172,15 @@ export function Num({
   return <span ref={ref}>{reduce ? fmt(value) : fmt(inView ? shown : 0)}</span>
 }
 
+export function Hint({ children }: { children: ReactNode }) {
+  return (
+    <p className="mt-3 flex gap-2 rounded-lg bg-base px-3 py-2 font-sans text-xs leading-snug text-sec">
+      <Info size={13} className="mt-px shrink-0 text-arena" aria-hidden />
+      <span>{children}</span>
+    </p>
+  )
+}
+
 export function Delta({ v, children }: { v: number; children?: ReactNode }) {
   const up = v >= 0
   return (
@@ -180,6 +203,7 @@ export function Kpi({
   label,
   sub,
   delta,
+  hint,
   tone = 'arena',
   className = '',
 }: {
@@ -191,6 +215,7 @@ export function Kpi({
   label: string
   sub?: ReactNode
   delta?: ReactNode
+  hint?: string
   tone?: 'arena' | 'menta' | 'lavanda' | 'rosa'
   className?: string
 }) {
@@ -206,6 +231,7 @@ export function Kpi({
         {delta}
       </div>
       {sub && <p className="mt-3 border-t border-ink/[.07] pt-3 font-sans text-[13px] leading-snug text-sec">{sub}</p>}
+      {hint && <Hint>{hint}</Hint>}
     </Card>
   )
 }

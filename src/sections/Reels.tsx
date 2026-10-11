@@ -1,8 +1,8 @@
-import { useMemo, useState } from 'react'
-import { ArrowDownUp } from 'lucide-react'
 import { Bar, BarChart, CartesianGrid, Cell, ReferenceLine, Tooltip, XAxis, YAxis } from 'recharts'
 import { reels } from '../data/report'
-import { C, Card, CardTitle, ChartBox, Kpi, Section, Segmented, Source, Tag, Tip, cursorFill, grid, useAnim, xAxis, yAxis } from '../components/ui'
+import PieceList from '../components/PieceList'
+import type { Piece } from '../components/PieceList'
+import { C, Card, CardTitle, ChartBox, Kpi, Section, Source, Tag, Tip, cursorFill, grid, useAnim, xAxis, yAxis } from '../components/ui'
 import { dlong, dm, mean, median, nf, pct, snip, stdev, sum } from '../lib/stats'
 
 export type Reel = (typeof reels)[number]
@@ -15,12 +15,8 @@ export function claseTag(c: string) {
   return <Tag tone="rosa">Sin guion</Tag>
 }
 
-type SortKey = 'f' | 'vistas' | 'tasa'
-
 export default function Reels() {
   const anim = useAnim()
-  const [key, setKey] = useState<SortKey>('f')
-  const [desc, setDesc] = useState(false)
 
   const views = reels.map((r) => r.vistas)
   const avg = mean(views)
@@ -31,11 +27,24 @@ export default function Reels() {
   const moe = (1.96 * stdev(views)) / Math.sqrt(views.length)
   const data = reels.map((r, i) => ({ i, ...r }))
 
-  const sorted = useMemo(() => {
-    const val = (r: Reel) => (key === 'f' ? r.f : key === 'vistas' ? r.vistas : rate(r))
-    const out = [...reels].sort((a, b) => (val(a) > val(b) ? 1 : val(a) < val(b) ? -1 : 0))
-    return desc ? out.reverse() : out
-  }, [key, desc])
+  const pieces: Piece[] = reels.map((r, i) => ({
+    id: `${i}`,
+    f: r.f,
+    texto: r.texto,
+    vistas: r.vistas,
+    chip: pct(rate(r), 2),
+    badge: claseTag(r.clase),
+    metrics: [
+      ['Vistas', nf(r.vistas)],
+      ['% de seguidores', pct(r.pctSeg)],
+      ['Alcance', nf(r.alcance)],
+      ['Tasa de interacción', pct(rate(r), 2)],
+      ['Me gusta', nf(r.likes)],
+      ['Comentarios', nf(r.com)],
+      ['Guardados', nf(r.guard)],
+      ['Compartidos', nf(r.comp)],
+    ],
+  }))
 
   return (
     <Section
@@ -68,60 +77,22 @@ export default function Reels() {
       </Card>
 
       <div className="grid gap-4 md:grid-cols-3">
-        <Kpi value={avg} label="Vistas promedio por reel" sub={`Mediana ${nf(median(views))} · margen de error 95 %: ±${nf(moe)}`} />
-        <Kpi value={Math.round((top5 / sum(views)) * 100)} suffix=" %" label="Del volumen, en los 5 mejores reels" sub={`Máximo ${nf(max)}, 7 de agosto`} />
-        <Kpi text={`${nf(first)} → ${nf(last)}`} label="Promedio de los 13 primeros frente a los 14 últimos" sub={`Caída de ${nf(Math.round((1 - last / first) * 100))} %`} />
+        <Kpi value={avg} label="Vistas promedio por reel" sub={`Mediana ${nf(median(views))} · margen de error 95 %: ±${nf(moe)}`} hint={`El margen de error indica el rango probable del promedio real: entre ${nf(avg - moe)} y ${nf(avg + moe)} vistas por reel, con 95 % de confianza.`} />
+        <Kpi value={Math.round((top5 / sum(views)) * 100)} suffix=" %" label="Del volumen, en los 5 mejores reels" sub={`Máximo ${nf(max)}, 7 de agosto`} tone="lavanda" hint="Mide la concentración: cuanto más alto, más depende el resultado total de muy pocas piezas." />
+        <Kpi text={`${nf(first)} → ${nf(last)}`} label="Promedio de los 13 primeros frente a los 14 últimos" sub={`Caída de ${nf(Math.round((1 - last / first) * 100))} %`} tone="rosa" hint="Compara el rendimiento típico de un reel al inicio de la ventana con el del final: cada reel reciente rinde bastante menos." />
       </div>
 
-      <div>
-        <div className="mb-4 flex flex-wrap items-center gap-3">
-          <span className="font-sans text-sm text-sec">Ordenar por</span>
-          <Segmented
-            label="Ordenar reels"
-            value={key}
-            onChange={(k) => {
-              setKey(k)
-              setDesc(k !== 'f')
-            }}
-            options={[
-              { v: 'f', l: 'Fecha' },
-              { v: 'vistas', l: 'Vistas' },
-              { v: 'tasa', l: 'Tasa de interacción' },
-            ]}
-          />
-          <button type="button" onClick={() => setDesc(!desc)} className="flex items-center gap-1.5 rounded-full bg-white px-3 py-2 text-sm text-sec shadow-card">
-            <ArrowDownUp size={14} /> {desc ? 'Mayor a menor' : 'Menor a mayor'}
-          </button>
-        </div>
-        <div className="grid gap-3 md:grid-cols-2">
-          {sorted.map((r) => (
-            <Card key={r.f + r.vistas}>
-              <div className="flex items-center justify-between gap-2">
-                <span className="font-num text-xs font-semibold text-ink">{dlong(r.f)}</span>
-                {claseTag(r.clase)}
-              </div>
-              <p className="mt-2 line-clamp-2 font-sans text-sm text-ink">{snip(r.texto)}</p>
-              <dl className="mt-3 grid grid-cols-4 gap-x-2 gap-y-2 font-num text-xs">
-                {[
-                  ['Vistas', nf(r.vistas)],
-                  ['% seguid.', pct(r.pctSeg)],
-                  ['Alcance', nf(r.alcance)],
-                  ['Tasa', pct(rate(r), 2)],
-                  ['Me gusta', nf(r.likes)],
-                  ['Comentarios', nf(r.com)],
-                  ['Guardados', nf(r.guard)],
-                  ['Compartidos', nf(r.comp)],
-                ].map(([k, v]) => (
-                  <div key={k}>
-                    <dt className="font-sans text-[11px] text-ter">{k}</dt>
-                    <dd className="font-semibold text-ink">{v}</dd>
-                  </div>
-                ))}
-              </dl>
-            </Card>
-          ))}
-        </div>
-      </div>
+      <PieceList
+        noun="reels"
+        accent={C.arena}
+        chipLabel="tasa"
+        items={pieces}
+        sorts={[
+          { v: 'vistas', l: 'Vistas', get: (p) => p.vistas },
+          { v: 'f', l: 'Fecha', get: (p) => p.f },
+          { v: 'tasa', l: 'Interacción', get: (p) => parseFloat(p.chip!.replace(',', '.')) },
+        ]}
+      />
     </Section>
   )
 }

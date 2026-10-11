@@ -37,10 +37,9 @@ export default function Guiones() {
       label="Guiones del portal"
       title="De 49 guiones escritos, 15 tienen una publicación identificable; ninguno de los 23 en revisión se publicó"
     >
-      <div className="grid gap-4 md:grid-cols-3">
-        <Kpi value={guiones.length} label="Guiones en 12 semanas" sub={`${conteo[0].total} grabados · ${aprob.total} aprobados · ${conteo[2].total} en revisión`} />
-        <Kpi text={`${conteo[0].con} de ${conteo[0].total}`} label="Grabados con publicación" sub="Los dos restantes son «Respuesta Jhonsan» y «YAP», piezas de reacción sin hallazgo" />
-        <Kpi text={`${aprob.con} de ${aprob.total}`} label="Aprobados ya publicados" sub="El portal no refleja su estado real" />
+      <div className="grid gap-4 md:grid-cols-2">
+        <Kpi value={guiones.length} label="Guiones en 12 semanas" sub={`${conteo[0].total} grabados · ${aprob.total} aprobados · ${conteo[2].total} en revisión`} hint="Un guion pasa por tres estados: en revisión, aprobado y grabado. Solo los grabados deberían llegar a publicarse." />
+        <Kpi text={`${conteo[0].con} de ${conteo[0].total}`} label="Grabados con publicación" sub="Los dos restantes son «Respuesta Jhonsan» y «YAP», piezas de reacción sin hallazgo" tone="menta" hint="Casi todo lo grabado terminó publicado: el cuello de botella está antes de grabar, en los guiones aprobados que esperan." />
       </div>
 
       <div className="grid gap-6 lg:grid-cols-[3fr_2fr]">

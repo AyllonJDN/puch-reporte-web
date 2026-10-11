@@ -18,7 +18,6 @@ export const NAV: { id: string; l: string }[] = [
   { id: 'plan', l: 'Planificado' },
   { id: 'cruce', l: 'Con y sin guion' },
   { id: 'recomendaciones', l: 'Recomendaciones' },
-  { id: 'metodologia', l: 'Metodología' },
 ]
 
 const GROUPS: { l: string; ids: string[] }[] = [
@@ -29,7 +28,6 @@ const GROUPS: { l: string; ids: string[] }[] = [
   { l: 'TikTok', ids: ['tiktok', 'plataformas', 'historias'] },
   { l: 'Guiones', ids: ['guiones', 'plan', 'cruce'] },
   { l: 'Recomendaciones', ids: ['recomendaciones'] },
-  { l: 'Metodología', ids: ['metodologia'] },
 ]
 
 export function ScrollProgress() {

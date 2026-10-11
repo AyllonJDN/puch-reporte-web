@@ -1,6 +1,7 @@
 import { motion, useReducedMotion } from 'framer-motion'
-import { BadgeCheck, ChevronDown } from 'lucide-react'
-import { Num } from '../components/ui'
+import { BadgeCheck } from 'lucide-react'
+import { Bar, BarChart, Cell, Pie, PieChart, Tooltip, XAxis } from 'recharts'
+import { C, ChartBox, Num, Tip } from '../components/ui'
 import { weekly } from '../data/report'
 import { nf } from '../lib/stats'
 
@@ -11,6 +12,17 @@ const stats = [
   { v: 15, d: 0, s: ' de 49', l: 'guiones con publicación identificada' },
 ]
 
+const weeks = weekly.map((w) => ({ label: `S${w.sem}`, w, a: w.reels ? w.vistasReels : null, b: w.tiktoks ? w.vistasTikTok : null }))
+const mix = [
+  { name: 'Reels', value: 80427, fill: C.arena },
+  { name: 'TikTok', value: 52493, fill: C.lavanda },
+]
+const top = [
+  { t: 'TikTok · 16 jul', d: 'Listado de propiedad', v: 34800, c: C.lavanda },
+  { t: 'Reel · 7 ago', d: '«Indignación»', v: 13511, c: C.arena },
+  { t: 'TikTok · 10 ago', d: '«Indignación»', v: 7540, c: C.lavanda },
+  { t: 'Reel · 22 jul', d: '¿Quién define el precio?', v: 7133, c: C.arena },
+]
 const tot = weekly.map((w) => w.vistasReels + w.vistasTikTok)
 const s12 = ((tot[11] - tot[10]) / tot[10]) * 100
 
@@ -90,7 +102,8 @@ export default function Hero() {
       ))}
       <Skyline />
 
-      <div className="relative mx-auto grid w-full max-w-[1200px] flex-1 items-center gap-10 px-4 pb-24 sm:px-6 lg:grid-cols-[1.25fr_.75fr]">
+      <div className="relative mx-auto w-full max-w-[1200px] flex-1 px-4 pb-20 sm:px-6">
+      <div className="grid items-center gap-10 lg:grid-cols-[1.3fr_.7fr]">
         <div>
           <motion.span
             initial={{ opacity: 0, y: 16 }}
@@ -116,7 +129,7 @@ export default function Hero() {
           </p>
 
           <motion.div
-            className="mt-10 grid grid-cols-2 gap-3 sm:gap-4"
+            className="mt-8 grid grid-cols-2 gap-3 sm:grid-cols-4"
             initial="hidden"
             animate="show"
             variants={{ show: { transition: { staggerChildren: 0.12, delayChildren: 1.2 } } }}
@@ -125,9 +138,9 @@ export default function Hero() {
               <motion.div
                 key={s.l}
                 variants={{ hidden: { opacity: 0, y: 24 }, show: { opacity: 1, y: 0 } }}
-                className="min-w-0 rounded-2xl border border-white/12 bg-white/[.07] p-4 backdrop-blur-md sm:p-5"
+                className="min-w-0 rounded-2xl border border-white/12 bg-white/[.07] p-4 backdrop-blur-md"
               >
-                <p className="font-display text-3xl font-semibold text-white sm:text-4xl">
+                <p className="font-display text-3xl font-semibold text-white sm:text-[28px] xl:text-3xl">
                   <Num value={s.v} decimals={s.d} suffix={s.s} />
                 </p>
                 <p className="mt-2 font-sans text-xs text-white/70 sm:text-sm">{s.l}</p>
@@ -146,7 +159,7 @@ export default function Hero() {
           <img
             src="/img/brikia-sergio.png"
             alt="Sergio Puch, Broker y Founder de Brikia: «Vender no es suerte. Es estrategia»"
-            className="relative w-full rounded-3xl shadow-2xl"
+            className="relative max-h-[470px] w-full rounded-3xl object-cover object-top shadow-2xl"
             width={460}
             height={615}
           />
@@ -166,12 +179,68 @@ export default function Hero() {
         </motion.div>
       </div>
 
-      <a href="#perfil" className="absolute bottom-[68px] left-1/2 z-10 hidden -translate-x-1/2 flex-col items-center gap-1 text-xs text-white/60 sm:flex">
-        Desliza
-        <motion.span animate={reduce ? undefined : { y: [0, 6, 0] }} transition={{ duration: 1.6, repeat: Infinity }}>
-          <ChevronDown size={18} />
-        </motion.span>
-      </a>
+      <motion.div
+        initial={{ opacity: 0, y: 24 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.7, delay: 1.5 }}
+        className="mt-8 grid gap-3 lg:grid-cols-12"
+      >
+        <div className="min-w-0 rounded-2xl border border-white/12 bg-white/[.06] p-4 backdrop-blur-md lg:col-span-5">
+          <p className="font-sans text-[11px] font-bold uppercase tracking-[.14em] text-white/60">Vistas por semana</p>
+          <ChartBox className="mt-2 h-[130px]" label="Barras de vistas semanales de reels y TikTok: pico en las semanas 1 y 2">
+            <BarChart data={weeks} margin={{ top: 4, right: 0, left: 0, bottom: 0 }}>
+              <XAxis dataKey="label" tick={{ fontSize: 10, fill: 'rgba(255,255,255,.5)' }} tickLine={false} axisLine={false} interval={0} />
+              <Tooltip cursor={{ fill: 'rgba(255,255,255,.06)' }} content={<Tip head={(_l, r) => `Semana ${r.w.sem}`} />} />
+              <Bar dataKey="a" name="Reels" stackId="s" fill={C.arena} isAnimationActive={!reduce} />
+              <Bar dataKey="b" name="TikTok" stackId="s" fill={C.lavanda} radius={[3, 3, 0, 0]} isAnimationActive={!reduce} />
+            </BarChart>
+          </ChartBox>
+        </div>
+        <div className="min-w-0 rounded-2xl border border-white/12 bg-white/[.06] p-4 backdrop-blur-md lg:col-span-3">
+          <p className="font-sans text-[11px] font-bold uppercase tracking-[.14em] text-white/60">Mezcla de vistas</p>
+          <div className="relative">
+            <ChartBox className="mt-2 h-[130px]" label="Dona: reels 60,5 % y TikTok 39,5 % de las vistas">
+              <PieChart>
+                <Pie data={mix} dataKey="value" nameKey="name" innerRadius="62%" outerRadius="92%" paddingAngle={3} stroke="none" isAnimationActive={!reduce}>
+                  {mix.map((m) => (
+                    <Cell key={m.name} fill={m.fill} />
+                  ))}
+                </Pie>
+                <Tooltip content={<Tip fmt={(v) => nf(v)} />} />
+              </PieChart>
+            </ChartBox>
+            <div className="pointer-events-none absolute inset-0 mt-2 flex flex-col items-center justify-center">
+              <span className="font-display text-xl font-semibold text-white">60,5 %</span>
+              <span className="text-[10px] text-white/60">reels</span>
+            </div>
+          </div>
+        </div>
+        <div className="min-w-0 rounded-2xl border border-white/12 bg-white/[.06] p-4 backdrop-blur-md lg:col-span-4">
+          <p className="font-sans text-[11px] font-bold uppercase tracking-[.14em] text-white/60">Piezas con más vistas</p>
+          <ul className="mt-3 space-y-2.5">
+            {top.map((t) => (
+              <li key={t.t + t.v}>
+                <div className="flex items-baseline justify-between gap-2 font-sans text-xs">
+                  <span className="truncate text-white/80">
+                    <b className="text-white">{t.t}</b> · {t.d}
+                  </span>
+                  <span className="font-num font-semibold text-white">{nf(t.v)}</span>
+                </div>
+                <div className="mt-1 h-1.5 rounded-full bg-white/10">
+                  <motion.div
+                    className="h-full rounded-full"
+                    style={{ background: t.c }}
+                    initial={{ width: 0 }}
+                    animate={{ width: `${(t.v / 34800) * 100}%` }}
+                    transition={{ duration: 1, delay: 1.8 }}
+                  />
+                </div>
+              </li>
+            ))}
+          </ul>
+        </div>
+      </motion.div>
+      </div>
 
       {/* Cinta de indicadores tipo terminal */}
       <div className="relative z-10 overflow-hidden border-y border-white/10 bg-black/30 py-3 backdrop-blur">

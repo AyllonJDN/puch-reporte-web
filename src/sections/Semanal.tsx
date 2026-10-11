@@ -102,9 +102,9 @@ export default function Semanal() {
           </Source>
         </Card>
         <div className="grid content-start gap-4">
-          <Kpi value={avg} label="Vistas promedio por semana" sub={`Mediana S3 a S12: ${nf(med312)}`} />
-          <Kpi value={lr.slope} label="Tendencia lineal, vistas por semana" sub={`R² = ${nf(lr.r2, 2)}`} />
-          <Kpi value={over} label="Semanas sobre la media + 1 desviación" sub="S1 y S2" />
+          <Kpi value={avg} label="Vistas promedio por semana" sub={`Mediana S3 a S12: ${nf(med312)}`} hint="Suma de vistas de las 12 semanas dividida entre 12. La mediana es menor porque las semanas 1 y 2 elevan el promedio." />
+          <Kpi value={lr.slope} label="Tendencia lineal, vistas por semana" sub={`R² = ${nf(lr.r2, 2)}`} tone="rosa" hint="Es la pendiente de la recta que mejor resume la serie: cada semana pierde en promedio unas 2.356 vistas. R² = 0,51 significa que la recta explica la mitad de la variación; el resto es movimiento propio de cada semana." />
+          <Kpi value={over} label="Semanas sobre la media + 1 desviación" sub="S1 y S2" tone="lavanda" hint="La desviación estándar mide cuánto se alejan las semanas del promedio. Superar promedio + 1 desviación marca una semana fuera de lo normal." />
         </div>
       </div>
     </Section>

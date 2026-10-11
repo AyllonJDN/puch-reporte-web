@@ -15,9 +15,9 @@ export default function Historias() {
       title="Las historias sostienen una audiencia estable de entre 450 y 1.100 vistas"
     >
       <div className="grid gap-4 md:grid-cols-3">
-        <Kpi value={sum(stories)} label="Vistas totales" sub={`${stories.length} historias`} />
-        <Kpi value={mean(stories)} label="Promedio por historia" />
-        <Kpi value={median(stories)} label="Mediana por historia" />
+        <Kpi value={sum(stories)} label="Vistas totales" sub={`${stories.length} historias`} hint="Suma de las historias que el panel lista, es decir, las de 451 vistas o más." />
+        <Kpi value={mean(stories)} label="Promedio por historia" tone="menta" hint="Vistas totales divididas entre el número de historias." />
+        <Kpi value={median(stories)} label="Mediana por historia" tone="lavanda" hint="Si promedio y mediana son parecidos, la audiencia es estable y no depende de picos aislados." />
       </div>
       <Card large>
         <ChartBox label="Área de las 44 historias ordenadas de mayor a menor número de vistas, entre 1.100 y 451">
