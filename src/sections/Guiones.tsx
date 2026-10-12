@@ -1,4 +1,6 @@
 import { useMemo, useState } from 'react'
+import { AnimatePresence, motion } from 'framer-motion'
+import { ChevronDown } from 'lucide-react'
 import { Bar, BarChart, CartesianGrid, Funnel, FunnelChart, LabelList, Legend, Tooltip, XAxis, YAxis } from 'recharts'
 import { guiones } from '../data/report'
 import { C, Card, CardTitle, ChartBox, Kpi, Section, Source, Tag, Tip, cursorFill, grid, legendProps, useAnim, xAxis } from '../components/ui'
@@ -11,6 +13,8 @@ export default function Guiones() {
   const anim = useAnim()
   const [estado, setEstado] = useState('todos')
   const [semana, setSemana] = useState('todas')
+  const [abierto, setAbierto] = useState<number | null>(null)
+  const [all, setAll] = useState(false)
 
   const conteo = ESTADOS.map((e) => {
     const l = guiones.filter((g) => g.estado === e)
@@ -110,34 +114,74 @@ export default function Guiones() {
             {filtered.length} de {guiones.length} guiones
           </span>
         </div>
-        <div className="grid gap-3 md:grid-cols-2 lg:grid-cols-3">
-          {filtered.map((g) => (
-            <Card key={g.n}>
-              <div className="flex items-start justify-between gap-2">
-                <span className="font-num text-xs font-semibold text-ter">
-                  N.º {g.n} · S{g.sem}
-                </span>
-                <Tag tone={tone[g.estado as keyof typeof tone]}>{g.estado}</Tag>
-              </div>
-              <h4 className="mt-2 font-sans text-sm font-bold text-ink">{g.titulo}</h4>
-              <p className="mt-1 text-sm text-sec">{g.gancho}</p>
-              <p className="mt-3 font-num text-xs text-ter">
-                {nf(g.caracteres)} caracteres · Calendario: {g.fechaCalendario ? dlong(g.fechaCalendario) : '—'}
-              </p>
-              <div className="mt-2 flex flex-wrap gap-1.5">
-                {g.publicaciones.length === 0 ? (
-                  <span className="text-xs text-ter">Publicación asociada: —</span>
-                ) : (
-                  g.publicaciones.map((p, i) => (
-                    <Tag key={i} tone={p.nivel === 'alta' ? 'menta' : 'lavanda'}>
-                      {p.plat === 'IG' ? 'Instagram' : 'TikTok'} · {dlong(p.fecha)} · {p.nivel}
-                    </Tag>
-                  ))
-                )}
-              </div>
-            </Card>
-          ))}
-        </div>
+        <Card large className="!p-0">
+          <ul>
+            {(all ? filtered : filtered.slice(0, 10)).map((g, i) => {
+              const isOpen = abierto === g.n
+              return (
+                <li key={g.n} className={`border-t border-ink/[.05] first:border-t-0 ${i % 2 ? 'bg-base/60' : ''}`}>
+                  <button
+                    type="button"
+                    aria-expanded={isOpen}
+                    onClick={() => setAbierto(isOpen ? null : g.n)}
+                    className="grid w-full grid-cols-[56px_1fr_auto_24px] items-center gap-3 px-4 py-2.5 text-left sm:px-6"
+                  >
+                    <span className="font-num text-[11px] font-semibold text-ter">
+                      {String(g.n).padStart(2, '0')} · S{g.sem}
+                    </span>
+                    <span className="truncate font-sans text-sm text-ink">{g.titulo}</span>
+                    <span className="flex items-center gap-2">
+                      {g.publicaciones.length > 0 && (
+                        <span className="hidden font-num text-[11px] text-sec sm:inline">{g.publicaciones.length} pub.</span>
+                      )}
+                      <Tag tone={tone[g.estado as keyof typeof tone]}>{g.estado}</Tag>
+                    </span>
+                    <ChevronDown size={16} className={`text-ter transition-transform ${isOpen ? 'rotate-180' : ''}`} />
+                  </button>
+                  <AnimatePresence initial={false}>
+                    {isOpen && (
+                      <motion.div
+                        initial={{ height: 0, opacity: 0 }}
+                        animate={{ height: 'auto', opacity: 1 }}
+                        exit={{ height: 0, opacity: 0 }}
+                        transition={{ duration: 0.25 }}
+                        className="overflow-hidden"
+                      >
+                        <div className="px-4 pb-4 pt-1 sm:px-6 md:pl-[84px]">
+                          <p className="font-sans text-sm text-sec">{g.gancho}</p>
+                          <p className="mt-2 font-num text-xs text-ter">
+                            {nf(g.caracteres)} caracteres · Calendario: {g.fechaCalendario ? dlong(g.fechaCalendario) : '—'}
+                          </p>
+                          <div className="mt-2 flex flex-wrap gap-1.5">
+                            {g.publicaciones.length === 0 ? (
+                              <span className="text-xs text-ter">Publicación asociada: —</span>
+                            ) : (
+                              g.publicaciones.map((p, k) => (
+                                <Tag key={k} tone={p.nivel === 'alta' ? 'menta' : 'lavanda'}>
+                                  {p.plat === 'IG' ? 'Instagram' : 'TikTok'} · {dlong(p.fecha)} · {p.nivel}
+                                </Tag>
+                              ))
+                            )}
+                          </div>
+                        </div>
+                      </motion.div>
+                    )}
+                  </AnimatePresence>
+                </li>
+              )
+            })}
+          </ul>
+          {filtered.length > 10 && (
+            <button
+              type="button"
+              onClick={() => setAll(!all)}
+              className="flex w-full items-center justify-center gap-2 border-t border-ink/[.07] py-3.5 font-sans text-sm font-bold text-ink hover:bg-base"
+            >
+              {all ? 'Mostrar solo los primeros 10' : `Ver los ${filtered.length} guiones`}
+              <ChevronDown size={16} className={all ? 'rotate-180' : ''} />
+            </button>
+          )}
+        </Card>
         <Source>Fuente: portal de contenido The Framework. El cruce con las publicaciones se infirió por título, gancho y tema.</Source>
       </div>
     </Section>

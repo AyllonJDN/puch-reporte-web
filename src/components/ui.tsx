@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react'
 import type { ReactElement, ReactNode } from 'react'
-import { animate, motion, useReducedMotion } from 'framer-motion'
-import { Info } from 'lucide-react'
+import { AnimatePresence, animate, motion, useReducedMotion } from 'framer-motion'
+import { Building, Building2, ChevronUp, DoorOpen, Hotel, Info, KeyRound, Landmark, Store, Warehouse } from 'lucide-react'
 import { useInView } from 'react-intersection-observer'
 import { ResponsiveContainer } from 'recharts'
 import { nf } from '../lib/stats'
@@ -66,6 +66,8 @@ export function Reveal({
   )
 }
 
+const ICONS = [Building2, Building, Landmark, KeyRound, Store, Warehouse, Hotel, DoorOpen]
+
 export function Section({
   id,
   num,
@@ -85,8 +87,23 @@ export function Section({
   alt?: boolean
   children: ReactNode
 }) {
+  const [open, setOpen] = useState(true)
+  const Icon = ICONS[(parseInt(num, 10) || 0) % ICONS.length]
+  useEffect(() => {
+    const all = (e: Event) => setOpen((e as CustomEvent<boolean>).detail)
+    const hash = () => {
+      if (window.location.hash === `#${id}`) setOpen(true)
+    }
+    window.addEventListener('sections:set', all)
+    window.addEventListener('hashchange', hash)
+    hash()
+    return () => {
+      window.removeEventListener('sections:set', all)
+      window.removeEventListener('hashchange', hash)
+    }
+  }, [id])
   return (
-    <section id={id} className={`relative scroll-mt-16 overflow-hidden py-16 md:py-24 ${dark ? 'bg-ink text-white' : alt ? 'bg-white/60' : ''}`}>
+    <section id={id} className={`relative scroll-mt-16 overflow-hidden py-14 md:py-20 ${dark ? 'bg-ink text-white' : alt ? 'bg-white/60' : ''}`}>
       <span
         aria-hidden
         className={`pointer-events-none absolute -top-2 right-2 select-none font-display text-[120px] font-semibold leading-none md:right-10 md:text-[200px] ${
@@ -97,11 +114,24 @@ export function Section({
       </span>
       <div className="relative mx-auto max-w-[1200px] px-4 sm:px-6">
         <Reveal>
-          <p className="flex items-center gap-3 font-sans text-xs uppercase tracking-[.2em] text-arena">
+          <div className="flex items-center gap-3 font-sans text-xs uppercase tracking-[.2em] text-arena">
+            <Icon size={16} strokeWidth={1.6} aria-hidden />
             <span className="font-num text-[11px] font-semibold">{num}</span>
-            <span className="h-px w-10 bg-arena/60" />
-            {label}
-          </p>
+            <span className="h-px w-8 bg-arena/60" />
+            <span>{label}</span>
+            <button
+              type="button"
+              onClick={() => setOpen(!open)}
+              aria-expanded={open}
+              aria-controls={`${id}-contenido`}
+              className={`no-print relative z-10 ml-auto flex items-center gap-1.5 rounded-full px-3 py-1.5 text-[11px] font-bold normal-case tracking-normal transition-colors ${
+                dark ? 'bg-white/10 text-white hover:bg-white/20' : 'bg-white text-ink shadow-card hover:bg-base'
+              }`}
+            >
+              {open ? 'Ocultar' : 'Mostrar'}
+              <ChevronUp size={14} className={`transition-transform ${open ? '' : 'rotate-180'}`} />
+            </button>
+          </div>
           {title && (
             <h2
               className={`mt-4 max-w-4xl font-display text-[28px] font-semibold leading-tight md:text-[40px] ${
@@ -113,7 +143,21 @@ export function Section({
           )}
           {lede && <p className={`mt-4 max-w-2xl font-sans text-base leading-relaxed ${dark ? 'text-white/70' : 'text-sec'}`}>{lede}</p>}
         </Reveal>
-        <Reveal className="mt-10 space-y-6 md:mt-12 md:space-y-8">{children}</Reveal>
+        <AnimatePresence initial={false}>
+          {open && (
+            <motion.div
+              id={`${id}-contenido`}
+              key="c"
+              initial={{ height: 0, opacity: 0 }}
+              animate={{ height: 'auto', opacity: 1 }}
+              exit={{ height: 0, opacity: 0 }}
+              transition={{ duration: 0.4, ease: 'easeInOut' }}
+              className="-mx-6 overflow-hidden px-6"
+            >
+              <div className="space-y-6 pb-8 pt-10 md:space-y-8 md:pt-12">{children}</div>
+            </motion.div>
+          )}
+        </AnimatePresence>
       </div>
     </section>
   )

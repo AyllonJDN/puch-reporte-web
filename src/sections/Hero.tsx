@@ -4,6 +4,7 @@ import { Bar, BarChart, Cell, Pie, PieChart, Tooltip, XAxis } from 'recharts'
 import { C, ChartBox, Num, Tip } from '../components/ui'
 import { weekly } from '../data/report'
 import { nf } from '../lib/stats'
+import Skyline from '../components/Skyline'
 
 const stats = [
   { v: 132920, d: 0, s: '', l: 'vistas combinadas' },
@@ -41,48 +42,6 @@ const ticker: { k: string; v: string; d?: number }[] = [
   { k: 'SEGUIDORES IG', v: '3.538' },
 ]
 
-function Skyline() {
-  const b = [
-    [0, 90, 60], [70, 60, 50], [130, 110, 70], [210, 40, 46], [264, 80, 56], [330, 130, 80],
-    [420, 70, 60], [490, 100, 50], [550, 50, 64], [624, 120, 72], [706, 80, 54], [770, 140, 84],
-    [864, 60, 52], [926, 100, 66], [1002, 70, 58], [1070, 120, 76], [1156, 90, 44],
-  ]
-  return (
-    <svg aria-hidden className="pointer-events-none absolute inset-x-0 bottom-14 h-48 w-full opacity-50" viewBox="0 0 1200 160" preserveAspectRatio="xMidYMax slice">
-      {b.map(([x, h, w], i) => (
-        <g key={i}>
-          <motion.rect
-            x={x}
-            y={160 - h}
-            width={w}
-            height={h}
-            fill="none"
-            stroke="#C4A882"
-            strokeOpacity={0.35}
-            strokeWidth={1}
-            initial={{ pathLength: 0 }}
-            animate={{ pathLength: 1 }}
-            transition={{ duration: 2, delay: 0.3 + i * 0.07 }}
-          />
-          {Array.from({ length: Math.floor(h / 18) }).map((_, r) =>
-            Array.from({ length: Math.floor(w / 16) }).map((__, c) => (
-              <rect
-                key={`${r}-${c}`}
-                x={x + 6 + c * 16}
-                y={160 - h + 8 + r * 18}
-                width={5}
-                height={7}
-                fill={(r * 7 + c * 3 + i) % 5 === 0 ? '#C4A882' : '#C4A882'}
-                fillOpacity={(r * 7 + c * 3 + i) % 5 === 0 ? 0.55 : 0.14}
-              />
-            )),
-          )}
-        </g>
-      ))}
-    </svg>
-  )
-}
-
 export default function Hero() {
   const reduce = useReducedMotion()
   return (
@@ -100,7 +59,8 @@ export default function Hero() {
           transition={{ duration: 120 + i * 40, repeat: Infinity, ease: 'linear' }}
         />
       ))}
-      <Skyline />
+      <Skyline tone="dark" seed={3} className="absolute inset-x-0 bottom-12 h-56 opacity-60" />
+      <Skyline tone="dark" seed={11} className="absolute inset-x-0 bottom-12 h-32 opacity-40" />
 
       <div className="relative mx-auto w-full max-w-[1200px] flex-1 px-4 pb-20 sm:px-6">
       <div className="grid items-center gap-10 lg:grid-cols-[1.3fr_.7fr]">

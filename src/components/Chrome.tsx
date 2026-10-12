@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react'
 import { AnimatePresence, motion, useScroll, useSpring } from 'framer-motion'
-import { Menu, X } from 'lucide-react'
+import { ChevronsDownUp, ChevronsUpDown, Menu, X } from 'lucide-react'
+import Skyline from './Skyline'
 
 export const NAV: { id: string; l: string }[] = [
   { id: 'perfil', l: 'Protagonista' },
@@ -39,6 +40,12 @@ export function Navbar() {
   const [scrolled, setScrolled] = useState(false)
   const [open, setOpen] = useState(false)
   const [active, setActive] = useState('')
+  const [allOpen, setAllOpen] = useState(true)
+  const toggleAll = () => {
+    const next = !allOpen
+    setAllOpen(next)
+    window.dispatchEvent(new CustomEvent('sections:set', { detail: next }))
+  }
 
   useEffect(() => {
     const onScroll = () => setScrolled(window.scrollY > 40)
@@ -105,6 +112,14 @@ export function Navbar() {
           </ul>
           <button
             type="button"
+            onClick={toggleAll}
+            className={`hidden items-center gap-1.5 rounded-full border px-3 py-1.5 text-xs xl:flex ${light ? 'border-white/30 text-white' : 'border-ink/20 text-ink'}`}
+          >
+            {allOpen ? <ChevronsDownUp size={14} /> : <ChevronsUpDown size={14} />}
+            {allOpen ? 'Contraer todo' : 'Expandir todo'}
+          </button>
+          <button
+            type="button"
             aria-label={open ? 'Cerrar menú' : 'Abrir menú'}
             aria-expanded={open}
             onClick={() => setOpen(!open)}
@@ -122,6 +137,14 @@ export function Navbar() {
             exit={{ opacity: 0 }}
             className="fixed inset-0 z-[55] overflow-y-auto bg-ink pt-24"
           >
+            <button
+              type="button"
+              onClick={toggleAll}
+              className="mx-6 mb-4 flex items-center gap-2 rounded-full border border-white/30 px-4 py-2 text-sm text-white"
+            >
+              {allOpen ? <ChevronsDownUp size={16} /> : <ChevronsUpDown size={16} />}
+              {allOpen ? 'Contraer todas las secciones' : 'Expandir todas las secciones'}
+            </button>
             <ul className="space-y-1 px-6 pb-10">
               {NAV.map((n) => (
                 <li key={n.id}>
@@ -177,6 +200,7 @@ export function Footer() {
   return (
     <footer className="relative overflow-hidden bg-ink px-4 py-16 text-white sm:px-6">
       <div className="grid-dots pointer-events-none absolute inset-0 opacity-40" />
+      <Skyline tone="dark" seed={7} className="absolute inset-x-0 bottom-0 h-40 opacity-70" />
       <div className="relative mx-auto grid max-w-[1200px] items-center gap-10 md:grid-cols-[1fr_260px]">
         <div>
           <p className="font-sans text-xs uppercase tracking-[.2em] text-arena">Cierre del informe</p>
