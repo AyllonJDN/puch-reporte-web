@@ -7,7 +7,7 @@ import { C, Card, CardTitle, ChartBox, Kpi, Section, Source, Tag, Tip, cursorFil
 import { dlong, nf } from '../lib/stats'
 
 const ESTADOS = ['Grabado', 'Aprobado', 'En revisión'] as const
-const tone = { Grabado: 'menta', Aprobado: 'lavanda', 'En revisión': 'arena' } as const
+const tone = { Grabado: 'olive', Aprobado: 'coral', 'En revisión': 'peri' } as const
 
 export default function Guiones() {
   const anim = useAnim()
@@ -28,22 +28,22 @@ export default function Guiones() {
     [estado, semana],
   )
   const funnel = [
-    { name: 'Guiones escritos', value: guiones.length, fill: C.arena, label: `Guiones escritos · ${guiones.length}` },
-    { name: 'Aprobados o grabados', value: conteo[0].total + conteo[1].total, fill: C.lavanda, label: `Aprobados o grabados · ${conteo[0].total + conteo[1].total}` },
-    { name: 'Publicados', value: con, fill: C.menta, label: `Publicados · ${con}` },
+    { name: 'Guiones escritos', value: guiones.length, fill: C.peri, label: `Guiones escritos · ${guiones.length}` },
+    { name: 'Aprobados o grabados', value: conteo[0].total + conteo[1].total, fill: C.coral, label: `Aprobados o grabados · ${conteo[0].total + conteo[1].total}` },
+    { name: 'Publicados', value: con, fill: C.olive, label: `Publicados · ${con}` },
   ]
-  const sel = 'rounded-full bg-white px-4 py-2 font-sans text-sm text-ink shadow-card'
+  const sel = 'rounded-full bg-white px-4 py-2 font-sans text-sm text-t1 shadow-card'
 
   return (
     <Section
       id="guiones"
       num="10"
       label="Guiones del portal"
-      title="De 49 guiones escritos, 15 tienen una publicación identificable; ninguno de los 23 en revisión se publicó"
+      title="De 49 guiones escritos, 15 tienen una publicación identificable; *ninguno* de los 23 en revisión se publicó"
     >
       <div className="grid gap-4 md:grid-cols-2">
         <Kpi value={guiones.length} label="Guiones en 12 semanas" sub={`${conteo[0].total} grabados · ${aprob.total} aprobados · ${conteo[2].total} en revisión`} hint="Un guion pasa por tres estados: en revisión, aprobado y grabado. Solo los grabados deberían llegar a publicarse." />
-        <Kpi text={`${conteo[0].con} de ${conteo[0].total}`} label="Grabados con publicación" sub="Los dos restantes son «Respuesta Jhonsan» y «YAP», piezas de reacción sin hallazgo" tone="menta" hint="Casi todo lo grabado terminó publicado: el cuello de botella está antes de grabar, en los guiones aprobados que esperan." />
+        <Kpi text={`${conteo[0].con} de ${conteo[0].total}`} label="Grabados con publicación" sub="Los dos restantes son «Respuesta Jhonsan» y «YAP», piezas de reacción sin hallazgo" tone="olive" hint="Casi todo lo grabado terminó publicado: el cuello de botella está antes de grabar, en los guiones aprobados que esperan." />
       </div>
 
       <div className="grid gap-6 lg:grid-cols-[3fr_2fr]">
@@ -53,8 +53,8 @@ export default function Guiones() {
             <BarChart data={conteo} layout="vertical" margin={{ top: 8, right: 16, left: 8, bottom: 0 }}>
               <defs>
                 <linearGradient id="gCon" x1="0" y1="0" x2="1" y2="0">
-                  <stop offset="0%" stopColor={C.menta} />
-                  <stop offset="100%" stopColor={C.menta} stopOpacity={0.6} />
+                  <stop offset="0%" stopColor={C.olive} />
+                  <stop offset="100%" stopColor={C.olive} stopOpacity={0.6} />
                 </linearGradient>
                 <linearGradient id="gSin" x1="0" y1="0" x2="1" y2="0">
                   <stop offset="0%" stopColor={C.sand} />
@@ -90,7 +90,7 @@ export default function Guiones() {
 
       <div>
         <div className="mb-4 flex flex-wrap items-center gap-3">
-          <label className="flex items-center gap-2 text-sm text-sec">
+          <label className="flex items-center gap-2 text-sm text-t2">
             Estado
             <select value={estado} onChange={(e) => setEstado(e.target.value)} className={sel}>
               <option value="todos">Todos</option>
@@ -99,7 +99,7 @@ export default function Guiones() {
               ))}
             </select>
           </label>
-          <label className="flex items-center gap-2 text-sm text-sec">
+          <label className="flex items-center gap-2 text-sm text-t2">
             Semana
             <select value={semana} onChange={(e) => setSemana(e.target.value)} className={sel}>
               <option value="todas">Todas</option>
@@ -110,7 +110,7 @@ export default function Guiones() {
               ))}
             </select>
           </label>
-          <span className="font-sans text-sm text-ter">
+          <span className="font-sans text-sm text-t3">
             {filtered.length} de {guiones.length} guiones
           </span>
         </div>
@@ -119,24 +119,24 @@ export default function Guiones() {
             {(all ? filtered : filtered.slice(0, 10)).map((g, i) => {
               const isOpen = abierto === g.n
               return (
-                <li key={g.n} className={`border-t border-ink/[.05] first:border-t-0 ${i % 2 ? 'bg-base/60' : ''}`}>
+                <li key={g.n} className={`border-t border-line first:border-t-0 ${i % 2 ? 'bg-cream/[.04]' : ''}`}>
                   <button
                     type="button"
                     aria-expanded={isOpen}
                     onClick={() => setAbierto(isOpen ? null : g.n)}
                     className="grid w-full grid-cols-[56px_1fr_auto_24px] items-center gap-3 px-4 py-2.5 text-left sm:px-6"
                   >
-                    <span className="font-num text-[11px] font-semibold text-ter">
+                    <span className="font-num text-[11px] font-semibold text-t3">
                       {String(g.n).padStart(2, '0')} · S{g.sem}
                     </span>
-                    <span className="truncate font-sans text-sm text-ink">{g.titulo}</span>
+                    <span className="truncate font-sans text-sm text-t1">{g.titulo}</span>
                     <span className="flex items-center gap-2">
                       {g.publicaciones.length > 0 && (
-                        <span className="hidden font-num text-[11px] text-sec sm:inline">{g.publicaciones.length} pub.</span>
+                        <span className="hidden font-num text-[11px] text-t2 sm:inline">{g.publicaciones.length} pub.</span>
                       )}
                       <Tag tone={tone[g.estado as keyof typeof tone]}>{g.estado}</Tag>
                     </span>
-                    <ChevronDown size={16} className={`text-ter transition-transform ${isOpen ? 'rotate-180' : ''}`} />
+                    <ChevronDown size={16} className={`text-t3 transition-transform ${isOpen ? 'rotate-180' : ''}`} />
                   </button>
                   <AnimatePresence initial={false}>
                     {isOpen && (
@@ -148,16 +148,16 @@ export default function Guiones() {
                         className="overflow-hidden"
                       >
                         <div className="px-4 pb-4 pt-1 sm:px-6 md:pl-[84px]">
-                          <p className="font-sans text-sm text-sec">{g.gancho}</p>
-                          <p className="mt-2 font-num text-xs text-ter">
+                          <p className="font-sans text-sm text-t2">{g.gancho}</p>
+                          <p className="mt-2 font-num text-xs text-t3">
                             {nf(g.caracteres)} caracteres · Calendario: {g.fechaCalendario ? dlong(g.fechaCalendario) : '—'}
                           </p>
                           <div className="mt-2 flex flex-wrap gap-1.5">
                             {g.publicaciones.length === 0 ? (
-                              <span className="text-xs text-ter">Publicación asociada: —</span>
+                              <span className="text-xs text-t3">Publicación asociada: —</span>
                             ) : (
                               g.publicaciones.map((p, k) => (
-                                <Tag key={k} tone={p.nivel === 'alta' ? 'menta' : 'lavanda'}>
+                                <Tag key={k} tone={p.nivel === 'alta' ? 'olive' : 'coral'}>
                                   {p.plat === 'IG' ? 'Instagram' : 'TikTok'} · {dlong(p.fecha)} · {p.nivel}
                                 </Tag>
                               ))
@@ -175,7 +175,7 @@ export default function Guiones() {
             <button
               type="button"
               onClick={() => setAll(!all)}
-              className="flex w-full items-center justify-center gap-2 border-t border-ink/[.07] py-3.5 font-sans text-sm font-bold text-ink hover:bg-base"
+              className="flex w-full items-center justify-center gap-2 border-t border-line py-3.5 font-sans text-sm font-bold text-t1 hover:bg-cream/[.06]"
             >
               {all ? 'Mostrar solo los primeros 10' : `Ver los ${filtered.length} guiones`}
               <ChevronDown size={16} className={all ? 'rotate-180' : ''} />

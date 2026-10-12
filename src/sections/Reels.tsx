@@ -9,10 +9,10 @@ export type Reel = (typeof reels)[number]
 export const rate = (r: Reel) => (r.inter / r.vistas) * 100
 
 export function claseTag(c: string) {
-  if (c.includes('alta')) return <Tag tone="menta">Coincidencia alta</Tag>
-  if (c.includes('probable')) return <Tag tone="lavanda">Coincidencia probable</Tag>
-  if (c.startsWith('Listado')) return <Tag tone="arena">Listado de propiedad</Tag>
-  return <Tag tone="rosa">Sin guion</Tag>
+  if (c.includes('alta')) return <Tag tone="olive">Coincidencia alta</Tag>
+  if (c.includes('probable')) return <Tag tone="coral">Coincidencia probable</Tag>
+  if (c.startsWith('Listado')) return <Tag tone="peri">Listado de propiedad</Tag>
+  return <Tag tone="clay">Sin guion</Tag>
 }
 
 export default function Reels() {
@@ -52,7 +52,7 @@ export default function Reels() {
       alt
       num="06"
       label="Instagram · Reels"
-      title="27 reels sumaron 80.427 vistas; el rendimiento por pieza cayó 62 % entre la primera y la segunda mitad"
+      title="27 reels sumaron 80.427 vistas; el rendimiento por pieza *cayó* 62 % entre la primera y la segunda mitad"
     >
       <Card large>
         <CardTitle>Vistas por reel, en orden cronológico</CardTitle>
@@ -68,7 +68,7 @@ export default function Reels() {
             <ReferenceLine y={avg} stroke={C.ink} strokeDasharray="5 4" strokeOpacity={0.5} label={{ value: `Promedio ${nf(avg)}`, position: 'insideTopRight', fill: C.sec, fontSize: 11 }} />
             <Bar dataKey="vistas" name="Vistas" radius={[6, 6, 0, 0]} {...anim}>
               {data.map((d) => (
-                <Cell key={d.i} fill={d.vistas === max ? C.ink : C.arena} />
+                <Cell key={d.i} fill={d.vistas === max ? C.peri : C.periDim} />
               ))}
             </Bar>
           </BarChart>
@@ -78,13 +78,13 @@ export default function Reels() {
 
       <div className="grid gap-4 md:grid-cols-3">
         <Kpi value={avg} label="Vistas promedio por reel" sub={`Mediana ${nf(median(views))} · margen de error 95 %: ±${nf(moe)}`} hint={`El margen de error indica el rango probable del promedio real: entre ${nf(avg - moe)} y ${nf(avg + moe)} vistas por reel, con 95 % de confianza.`} />
-        <Kpi value={Math.round((top5 / sum(views)) * 100)} suffix=" %" label="Del volumen, en los 5 mejores reels" sub={`Máximo ${nf(max)}, 7 de agosto`} tone="lavanda" hint="Mide la concentración: cuanto más alto, más depende el resultado total de muy pocas piezas." />
-        <Kpi text={`${nf(first)} → ${nf(last)}`} label="Promedio de los 13 primeros frente a los 14 últimos" sub={`Caída de ${nf(Math.round((1 - last / first) * 100))} %`} tone="rosa" hint="Compara el rendimiento típico de un reel al inicio de la ventana con el del final: cada reel reciente rinde bastante menos." />
+        <Kpi value={Math.round((top5 / sum(views)) * 100)} suffix=" %" label="Del volumen, en los 5 mejores reels" sub={`Máximo ${nf(max)}, 7 de agosto`} tone="coral" hint="Mide la concentración: cuanto más alto, más depende el resultado total de muy pocas piezas." />
+        <Kpi text={`${nf(first)} → ${nf(last)}`} label="Promedio de los 13 primeros frente a los 14 últimos" sub={`Caída de ${nf(Math.round((1 - last / first) * 100))} %`} tone="clay" hint="Compara el rendimiento típico de un reel al inicio de la ventana con el del final: cada reel reciente rinde bastante menos." />
       </div>
 
       <PieceList
         noun="reels"
-        accent={C.arena}
+        accent={C.peri}
         chipLabel="tasa"
         items={pieces}
         sorts={[

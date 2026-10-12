@@ -1,7 +1,6 @@
 import { MotionConfig } from 'framer-motion'
 import { Footer, Loader, Navbar, ScrollProgress } from './components/Chrome'
 import Hero from './sections/Hero'
-import { SkylineDivider } from './components/Skyline'
 import Perfil from './sections/Perfil'
 import Historial from './sections/Historial'
 import Resumen from './sections/Resumen'
@@ -26,25 +25,18 @@ export default function App() {
       <main>
         <Hero />
         <Perfil />
-        <SkylineDivider seed={2} />
         <Resumen />
         <Cuenta />
-        <SkylineDivider seed={3} />
         <Semanal />
         <Historial />
-        <SkylineDivider seed={4} />
         <Estadistica />
         <Reels />
-        <SkylineDivider seed={5} />
         <Interaccion />
         <TikTok />
-        <SkylineDivider seed={6} />
         <Plataformas />
         <Guiones />
-        <SkylineDivider seed={8} />
         <Plan />
         <Cruce />
-        <SkylineDivider seed={9} />
         <Recomendaciones />
       </main>
       <Footer />

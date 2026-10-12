@@ -6,9 +6,9 @@ import { median, nf, sum } from '../lib/stats'
 export default function Cruce() {
   const anim = useAnim()
   const groups = [
-    { name: 'Con guion', fill: C.menta, l: reels.filter((r) => r.clase.startsWith('Con guion')) },
-    { name: 'Sin guion', fill: C.rosa, l: reels.filter((r) => r.clase.startsWith('Sin guion')) },
-    { name: 'Listados de propiedad', fill: C.arena, l: reels.filter((r) => r.clase.startsWith('Listado')) },
+    { name: 'Con guion', fill: C.olive, l: reels.filter((r) => r.clase.startsWith('Con guion')) },
+    { name: 'Sin guion', fill: C.clay, l: reels.filter((r) => r.clase.startsWith('Sin guion')) },
+    { name: 'Listados de propiedad', fill: C.peri, l: reels.filter((r) => r.clase.startsWith('Listado')) },
   ].map((g) => ({
     ...g,
     n: g.l.length,
@@ -43,7 +43,7 @@ export default function Cruce() {
       id="cruce"
       num="12"
       label="Con guion frente a sin guion"
-      title="Los reels con guion obtienen más interacción por vista; el alcance depende más del tema y del momento"
+      title="Los reels con guion obtienen más *interacción* por vista; el alcance depende más del tema y del momento"
     >
       <div className="grid gap-6 lg:grid-cols-2">
         {chart('tasa', 'Interacción sobre vistas (reels)', 'Barras de interacción sobre vistas: con guion 1,82 %, sin guion 1,10 % y listados de propiedad 0,94 %', 2)}
@@ -58,7 +58,7 @@ export default function Cruce() {
           hint="Coincidencia alta: título y gancho casi idénticos al guion. Probable: mismo tema, redacción distinta; es una inferencia."
         />
         <Card>
-          <p className="font-sans text-sm leading-relaxed text-sec">
+          <p className="font-sans text-sm leading-relaxed text-t2">
             Sin guion: opiniones, reacciones, colaboraciones y la serie de septiembre; el reel más visto (13.511) pertenece a este grupo.
           </p>
         </Card>

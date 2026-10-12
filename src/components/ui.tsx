@@ -1,26 +1,32 @@
-import { useEffect, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import type { ReactElement, ReactNode } from 'react'
-import { AnimatePresence, animate, motion, useReducedMotion } from 'framer-motion'
-import { Building, Building2, ChevronUp, DoorOpen, Hotel, Info, KeyRound, Landmark, Store, Warehouse } from 'lucide-react'
+import { AnimatePresence, animate, motion, useMotionValue, useReducedMotion, useSpring, useTransform } from 'framer-motion'
+import { ChevronUp, Info } from 'lucide-react'
 import { useInView } from 'react-intersection-observer'
 import { ResponsiveContainer } from 'recharts'
 import { nf } from '../lib/stats'
+import Drawing from './Drawing'
 
+/* ---------- Paleta Matiz ---------- */
 export const C = {
-  base: '#F5F0EB',
-  ink: '#1A1A2E',
-  arena: '#C4A882',
-  menta: '#A8D5BA',
-  rosa: '#F2A7A7',
-  lavanda: '#B8C8E8',
-  sec: '#5C5C5C',
-  ter: '#9A9A9A',
-  sand: '#E4DDD3',
+  cream: '#FFFAF5',
+  ink: '#FFFAF5', // texto sobre tarjeta uva (las tarjetas siempre son oscuras)
+  grape: '#470B24',
+  deep: '#2A0615',
+  coral: '#F47358', // TikTok / destacado cálido
+  peri: '#C4D3F7', // Instagram / destacado frío
+  olive: '#B9AE6F', // tercera serie, positivo
+  clay: '#9C4A44', // versión apagada del coral, negativo
+  periDim: '#6F80B3',
+  sec: 'rgba(255,250,245,.72)',
+  ter: 'rgba(255,250,245,.55)',
+  sand: 'rgba(255,250,245,.22)',
 }
+export const EASE = [0.2, 0.7, 0.2, 1] as const
 
 /* ---------- Estilos compartidos de gráficos ---------- */
-const tick = { fontFamily: 'Inter, sans-serif', fontSize: 11, fill: C.ter }
-export const xAxis = { tick, tickLine: false, axisLine: { stroke: 'rgba(26,26,46,.15)' } } as const
+const tick = { fontFamily: 'Hanken Grotesk, sans-serif', fontSize: 12, fill: '#CDBCC6' }
+export const xAxis = { tick, tickLine: false, axisLine: { stroke: 'rgba(255,255,255,.2)' } } as const
 export const yAxis = {
   tick,
   tickLine: false,
@@ -28,45 +34,138 @@ export const yAxis = {
   width: 48,
   tickFormatter: (v: number) => nf(v),
 } as const
-export const grid = { vertical: false, strokeDasharray: '3 3', stroke: 'rgba(26,26,46,.08)' } as const
+export const grid = { vertical: false, strokeDasharray: '4 4', stroke: 'rgba(255,255,255,.09)' } as const
 export const legendProps = {
   verticalAlign: 'bottom',
   iconType: 'circle',
   iconSize: 8,
-  wrapperStyle: { fontSize: 12, fontFamily: 'DM Sans, sans-serif', color: C.sec, paddingTop: 12 },
+  wrapperStyle: { fontSize: 12, fontFamily: 'Hanken Grotesk, sans-serif', color: '#CDBCC6', paddingTop: 12 },
 } as const
-export const cursorFill = { fill: 'rgba(26,26,46,.04)' }
+export const cursorFill = { fill: 'rgba(255,255,255,.05)' }
 
 export function useAnim() {
   const reduce = useReducedMotion()
-  return { isAnimationActive: !reduce, animationDuration: 1000, animationEasing: 'ease-out' } as const
+  return { isAnimationActive: !reduce, animationDuration: 1400, animationEasing: 'ease-out' } as const
 }
 
-/* ---------- Estructura ---------- */
-export function Reveal({
-  children,
-  className,
-  delay = 0,
-}: {
-  children: ReactNode
-  className?: string
-  delay?: number
-}) {
+/* ---------- Movimiento ---------- */
+export function Reveal({ children, className, delay = 0 }: { children: ReactNode; className?: string; delay?: number }) {
   const reduce = useReducedMotion()
   return (
     <motion.div
       className={className}
-      initial={reduce ? false : { opacity: 0, y: 24 }}
+      initial={reduce ? false : { opacity: 0, y: 36 }}
       whileInView={{ opacity: 1, y: 0 }}
-      viewport={{ once: true, margin: '-40px' }}
-      transition={{ duration: 0.6, delay }}
+      viewport={{ once: true, margin: '-60px' }}
+      transition={{ duration: 0.8, delay, ease: EASE }}
     >
       {children}
     </motion.div>
   )
 }
 
-const ICONS = [Building2, Building, Landmark, KeyRound, Store, Warehouse, Hotel, DoorOpen]
+/** Titular palabra por palabra; *palabra* queda en cursiva de acento. */
+export function WordReveal({ text, className = '' }: { text: string; className?: string }) {
+  const reduce = useReducedMotion()
+  const words = text
+    .split(/(\*[^*]+\*)/)
+    .filter(Boolean)
+    .flatMap((p) => {
+      const it = p.startsWith('*')
+      return p
+        .replace(/\*/g, '')
+        .split(' ')
+        .filter(Boolean)
+        .map((w) => ({ w, it }))
+    })
+  return (
+    <motion.h2
+      className={className}
+      aria-label={text.replace(/\*/g, '')}
+      initial={reduce ? 'show' : 'hidden'}
+      whileInView="show"
+      viewport={{ once: true, margin: '-40px' }}
+    >
+      {words.map((x, i) => (
+        <span key={i} aria-hidden className="inline-block overflow-hidden pb-[.14em] align-bottom">
+          <motion.span
+            className={`inline-block ${x.it ? 'italic text-accent' : ''}`}
+            variants={{ hidden: { y: '115%' }, show: { y: 0, transition: { duration: 0.85, delay: i * 0.055, ease: EASE } } }}
+          >
+            {x.w}
+          </motion.span>
+          {' '}
+        </span>
+      ))}
+    </motion.h2>
+  )
+}
+
+/** Inclinación 3D con el mouse (±5°). */
+export function Tilt({ children, className = '' }: { children: ReactNode; className?: string }) {
+  const reduce = useReducedMotion()
+  const ref = useRef<HTMLDivElement>(null)
+  const mx = useMotionValue(0)
+  const my = useMotionValue(0)
+  const sx = useSpring(mx, { stiffness: 180, damping: 18 })
+  const sy = useSpring(my, { stiffness: 180, damping: 18 })
+  const rx = useTransform(sy, [-0.5, 0.5], [5, -5])
+  const ry = useTransform(sx, [-0.5, 0.5], [-5, 5])
+  if (reduce) return <div className={className}>{children}</div>
+  return (
+    <motion.div
+      ref={ref}
+      className={className}
+      style={{ rotateX: rx, rotateY: ry, transformPerspective: 900 }}
+      onMouseMove={(e) => {
+        const b = ref.current!.getBoundingClientRect()
+        mx.set((e.clientX - b.left) / b.width - 0.5)
+        my.set((e.clientY - b.top) / b.height - 0.5)
+      }}
+      onMouseLeave={() => {
+        mx.set(0)
+        my.set(0)
+      }}
+    >
+      {children}
+    </motion.div>
+  )
+}
+
+/* ---------- Estructura: hojas apiladas ---------- */
+type Tone = 'dark' | 'grape' | 'light'
+const TONES: Record<string, Tone> = {
+  perfil: 'light',
+  resumen: 'dark',
+  cuenta: 'light',
+  semanal: 'grape',
+  historial: 'light',
+  estadistica: 'dark',
+  reels: 'light',
+  interaccion: 'grape',
+  tiktok: 'light',
+  plataformas: 'dark',
+  guiones: 'light',
+  plan: 'grape',
+  cruce: 'light',
+  recomendaciones: 'dark',
+}
+const DRAW: Record<string, string> = {
+  perfil: 'house',
+  resumen: 'tower',
+  cuenta: 'villa',
+  semanal: 'tower',
+  historial: 'plan',
+  estadistica: 'key',
+  reels: 'door',
+  interaccion: 'house',
+  tiktok: 'villa',
+  plataformas: 'plan',
+  guiones: 'key',
+  plan: 'tower',
+  cruce: 'door',
+  recomendaciones: 'villa',
+}
 
 export function Section({
   id,
@@ -74,8 +173,6 @@ export function Section({
   label,
   title,
   lede,
-  dark,
-  alt,
   children,
 }: {
   id: string
@@ -88,7 +185,7 @@ export function Section({
   children: ReactNode
 }) {
   const [open, setOpen] = useState(true)
-  const Icon = ICONS[(parseInt(num, 10) || 0) % ICONS.length]
+  const tone = TONES[id] ?? 'light'
   useEffect(() => {
     const all = (e: Event) => setOpen((e as CustomEvent<boolean>).detail)
     const hash = () => {
@@ -103,45 +200,36 @@ export function Section({
     }
   }, [id])
   return (
-    <section id={id} className={`relative scroll-mt-16 overflow-hidden py-14 md:py-20 ${dark ? 'bg-ink text-white' : alt ? 'bg-white/60' : ''}`}>
-      <span
-        aria-hidden
-        className={`pointer-events-none absolute -top-2 right-2 select-none font-display text-[120px] font-semibold leading-none md:right-10 md:text-[200px] ${
-          dark ? 'text-white/[.04]' : 'text-arena/[.14]'
-        }`}
-      >
-        {num}
-      </span>
-      <div className="relative mx-auto max-w-[1200px] px-4 sm:px-6">
+    <section
+      id={id}
+      className={`tone-${tone} relative -mt-10 scroll-mt-16 overflow-hidden rounded-t-[36px] pb-16 pt-24 md:-mt-14 md:rounded-t-[72px] md:pb-24 md:pt-32`}
+    >
+      <Drawing name={DRAW[id] ?? 'tower'} className="pointer-events-none absolute -top-2 right-2 h-44 w-44 text-accent opacity-[.22] md:right-12 md:top-6 md:h-64 md:w-64" />
+      <div className="relative mx-auto max-w-[1320px] px-4 sm:px-6">
         <Reveal>
-          <div className="flex items-center gap-3 font-sans text-xs uppercase tracking-[.2em] text-arena">
-            <Icon size={16} strokeWidth={1.6} aria-hidden />
-            <span className="font-num text-[11px] font-semibold">{num}</span>
-            <span className="h-px w-8 bg-arena/60" />
+          <div className="flex items-center gap-3 font-sans text-xs uppercase tracking-[.22em] text-t2">
+            <span className="font-display text-[26px] font-normal normal-case italic leading-none tracking-normal text-coral">{num}</span>
+            <motion.span
+              className="h-px w-12 origin-left bg-coral/70"
+              initial={{ scaleX: 0 }}
+              whileInView={{ scaleX: 1 }}
+              viewport={{ once: true }}
+              transition={{ duration: 1, ease: EASE }}
+            />
             <span>{label}</span>
             <button
               type="button"
               onClick={() => setOpen(!open)}
               aria-expanded={open}
               aria-controls={`${id}-contenido`}
-              className={`no-print relative z-10 ml-auto flex items-center gap-1.5 rounded-full px-3 py-1.5 text-[11px] font-bold normal-case tracking-normal transition-colors ${
-                dark ? 'bg-white/10 text-white hover:bg-white/20' : 'bg-white text-ink shadow-card hover:bg-base'
-              }`}
+              className="no-print relative z-10 ml-auto flex items-center gap-1.5 rounded-full border border-line px-3.5 py-1.5 font-sans text-[11px] font-semibold normal-case tracking-normal text-t1 transition-colors hover:bg-coral hover:text-deep"
             >
               {open ? 'Ocultar' : 'Mostrar'}
               <ChevronUp size={14} className={`transition-transform ${open ? '' : 'rotate-180'}`} />
             </button>
           </div>
-          {title && (
-            <h2
-              className={`mt-4 max-w-4xl font-display text-[28px] font-semibold leading-tight md:text-[40px] ${
-                dark ? 'text-white' : 'text-ink'
-              }`}
-            >
-              {title}
-            </h2>
-          )}
-          {lede && <p className={`mt-4 max-w-2xl font-sans text-base leading-relaxed ${dark ? 'text-white/70' : 'text-sec'}`}>{lede}</p>}
+          {title && <WordReveal text={title} className="mt-5 max-w-4xl font-display text-[34px] font-light leading-[1.04] text-t1 md:text-[52px]" />}
+          {lede && <p className="mt-4 max-w-2xl font-sans text-base leading-relaxed text-t2">{lede}</p>}
         </Reveal>
         <AnimatePresence initial={false}>
           {open && (
@@ -151,7 +239,7 @@ export function Section({
               initial={{ height: 0, opacity: 0 }}
               animate={{ height: 'auto', opacity: 1 }}
               exit={{ height: 0, opacity: 0 }}
-              transition={{ duration: 0.4, ease: 'easeInOut' }}
+              transition={{ duration: 0.45, ease: EASE }}
               className="-mx-6 overflow-hidden px-6"
             >
               <div className="space-y-6 pb-8 pt-10 md:space-y-8 md:pt-12">{children}</div>
@@ -163,32 +251,16 @@ export function Section({
   )
 }
 
-export function Card({
-  children,
-  className = '',
-  large,
-}: {
-  children: ReactNode
-  className?: string
-  large?: boolean
-}) {
-  return (
-    <div
-      className={`min-w-0 border border-ink/[.06] bg-white shadow-card ${
-        large ? 'rounded-3xl p-5 sm:p-8' : 'rounded-2xl p-5 sm:p-6'
-      } ${className}`}
-    >
-      {children}
-    </div>
-  )
+export function Card({ children, className = '', large }: { children: ReactNode; className?: string; large?: boolean }) {
+  return <div className={`card min-w-0 ${large ? 'p-5 sm:p-8' : 'p-5 sm:p-6'} ${className}`}>{children}</div>
 }
 
 export function CardTitle({ children }: { children: ReactNode }) {
-  return <h3 className="mb-4 font-sans text-base font-bold text-ink">{children}</h3>
+  return <h3 className="mb-4 font-sans text-base font-semibold text-t1">{children}</h3>
 }
 
-export function Source({ children, dark }: { children: ReactNode; dark?: boolean }) {
-  return <p className={`mt-4 text-sm italic ${dark ? 'text-white/60' : 'text-ter'}`}>{children}</p>
+export function Source({ children }: { children: ReactNode }) {
+  return <p className="mt-4 font-display text-[15px] italic leading-snug text-t3">{children}</p>
 }
 
 /* ---------- Números ---------- */
@@ -208,7 +280,7 @@ export function Num({
   const [shown, setShown] = useState(0)
   useEffect(() => {
     if (!inView || value == null || reduce) return
-    const c = animate(0, value, { duration: 1.6, ease: 'easeOut', onUpdate: setShown })
+    const c = animate(0, value, { duration: 1.8, ease: 'easeOut', onUpdate: setShown })
     return () => c.stop()
   }, [inView, value, reduce])
   if (value == null) return <span>—</span>
@@ -218,8 +290,8 @@ export function Num({
 
 export function Hint({ children }: { children: ReactNode }) {
   return (
-    <p className="mt-3 flex gap-2 rounded-lg bg-base px-3 py-2 font-sans text-xs leading-snug text-sec">
-      <Info size={13} className="mt-px shrink-0 text-arena" aria-hidden />
+    <p className="mt-4 flex gap-2 rounded-xl bg-cream/[.06] px-3 py-2.5 font-sans text-xs leading-snug text-t2">
+      <Info size={14} className="mt-px shrink-0 text-coral" aria-hidden />
       <span>{children}</span>
     </p>
   )
@@ -228,15 +300,13 @@ export function Hint({ children }: { children: ReactNode }) {
 export function Delta({ v, children }: { v: number; children?: ReactNode }) {
   const up = v >= 0
   return (
-    <span
-      className={`inline-flex items-center gap-1 rounded-md px-1.5 py-0.5 font-num text-[11px] font-semibold text-ink ${
-        up ? 'bg-menta/70' : 'bg-rosa/70'
-      }`}
-    >
+    <span className={`inline-flex items-center gap-1 rounded-full px-2 py-0.5 font-num text-[11px] font-bold text-deep ${up ? 'bg-olive' : 'bg-coral'}`}>
       {up ? '▲' : '▼'} {children ?? `${nf(Math.abs(v), 1)} %`}
     </span>
   )
 }
+
+const GLOW = { peri: '#C4D3F7', olive: '#B9AE6F', coral: '#F47358', clay: '#9C4A44' }
 
 export function Kpi({
   value,
@@ -248,7 +318,7 @@ export function Kpi({
   sub,
   delta,
   hint,
-  tone = 'arena',
+  tone = 'peri',
   className = '',
 }: {
   value?: number | null
@@ -260,23 +330,24 @@ export function Kpi({
   sub?: ReactNode
   delta?: ReactNode
   hint?: string
-  tone?: 'arena' | 'menta' | 'lavanda' | 'rosa'
+  tone?: 'peri' | 'olive' | 'coral' | 'clay'
   className?: string
 }) {
-  const bar = { arena: 'bg-arena', menta: 'bg-menta', lavanda: 'bg-lavanda', rosa: 'bg-rosa' }[tone]
   return (
-    <Card className={`relative overflow-hidden ${className}`}>
-      <span className={`absolute inset-y-0 left-0 w-1 ${bar}`} aria-hidden />
-      <p className="font-sans text-[11px] font-bold uppercase tracking-[.14em] text-sec">{label}</p>
-      <div className="mt-3 flex flex-wrap items-end gap-x-3 gap-y-1">
-        <span className="break-words font-display text-4xl font-semibold leading-none text-ink md:text-[44px]">
-          {text ?? <Num value={value ?? null} decimals={decimals} prefix={prefix} suffix={suffix} />}
-        </span>
-        {delta}
-      </div>
-      {sub && <p className="mt-3 border-t border-ink/[.07] pt-3 font-sans text-[13px] leading-snug text-sec">{sub}</p>}
-      {hint && <Hint>{hint}</Hint>}
-    </Card>
+    <Tilt className={className}>
+      <Card className="relative h-full overflow-hidden">
+        <span className="pointer-events-none absolute inset-0 opacity-30" style={{ background: `radial-gradient(circle at 100% 0%, ${GLOW[tone]}, transparent 55%)` }} aria-hidden />
+        <p className="relative font-sans text-[11px] font-semibold uppercase tracking-[.2em] text-t2">{label}</p>
+        <div className="relative mt-4 flex flex-wrap items-end gap-x-3 gap-y-1">
+          <span className="break-words font-display text-[56px] font-light leading-[.95] text-t1 md:text-[68px]">
+            {text ?? <Num value={value ?? null} decimals={decimals} prefix={prefix} suffix={suffix} />}
+          </span>
+          {delta}
+        </div>
+        {sub && <p className="relative mt-4 border-t border-line pt-3 font-sans text-[13px] leading-snug text-t2">{sub}</p>}
+        {hint && <Hint>{hint}</Hint>}
+      </Card>
+    </Tilt>
   )
 }
 
@@ -293,7 +364,7 @@ export function Segmented<T extends string>({
   label: string
 }) {
   return (
-    <div role="group" aria-label={label} className="inline-flex max-w-full flex-wrap gap-1 rounded-full bg-base p-1">
+    <div role="group" aria-label={label} className="inline-flex max-w-full flex-wrap gap-1 rounded-full border border-line bg-cream/[.06] p-1">
       {options.map((o) => (
         <button
           key={o.v}
@@ -301,7 +372,7 @@ export function Segmented<T extends string>({
           aria-pressed={value === o.v}
           onClick={() => onChange(o.v)}
           className={`rounded-full px-4 py-1.5 font-sans text-sm transition-colors ${
-            value === o.v ? 'bg-ink text-white' : 'text-sec hover:text-ink'
+            value === o.v ? 'bg-coral font-semibold text-deep' : 'text-t2 hover:text-t1'
           }`}
         >
           {o.l}
@@ -311,10 +382,10 @@ export function Segmented<T extends string>({
   )
 }
 
-export function Tag({ children, tone }: { children: ReactNode; tone: 'menta' | 'lavanda' | 'arena' | 'rosa' }) {
-  const bg = { menta: 'bg-menta', lavanda: 'bg-lavanda', arena: 'bg-arena', rosa: 'bg-rosa' }[tone]
+export function Tag({ children, tone }: { children: ReactNode; tone: 'olive' | 'coral' | 'peri' | 'clay' }) {
+  const bg = { olive: 'bg-olive', coral: 'bg-coral', peri: 'bg-peri', clay: 'bg-peri/70' }[tone]
   return (
-    <span className={`inline-block whitespace-nowrap rounded-full px-2.5 py-0.5 font-sans text-xs font-medium text-ink ${bg}`}>
+    <span className={`inline-block whitespace-nowrap rounded-full px-2.5 py-0.5 font-sans text-xs font-semibold text-deep ${bg}`}>
       {children}
     </span>
   )
@@ -323,7 +394,7 @@ export function Tag({ children, tone }: { children: ReactNode; tone: 'menta' | '
 /* ---------- Gráficos ---------- */
 export function ChartBox({
   label,
-  className = 'h-[240px] sm:h-[340px]',
+  className = 'h-[260px] sm:h-[340px]',
   children,
 }: {
   label: string
@@ -355,25 +426,23 @@ export function Tip({ active, payload, label, fmt, head, foot }: TipProps) {
   if (!active || !payload?.length) return null
   const row = payload[0].payload
   return (
-    <div className="max-w-[260px] rounded-xl bg-white p-3 font-sans text-xs shadow-card">
-      <p className="mb-1.5 font-bold text-ink">{head ? head(label, row) : label}</p>
+    <div className="tip max-w-[260px] rounded-xl bg-cream p-3 font-sans text-xs shadow-2xl">
+      <p className="mb-1.5 font-bold text-[#B8442E]">{head ? head(label, row) : label}</p>
       {payload
         .filter((p) => p.value != null && p.name != null)
         .map((p, i) => (
-          <p key={i} className="flex items-center gap-2 text-sec">
+          <p key={i} className="flex items-center gap-2 text-deep/70">
             <span className="h-2 w-2 shrink-0 rounded-full" style={{ background: p.color ?? p.fill ?? p.stroke }} />
             <span>{p.name}:</span>
-            <span className="ml-auto pl-3 font-num font-medium text-ink">
-              {fmt ? fmt(p.value, p.name) : nf(p.value)}
-            </span>
+            <span className="ml-auto pl-3 font-num font-semibold text-deep">{fmt ? fmt(p.value, p.name) : nf(p.value)}</span>
           </p>
         ))}
-      {foot && <div className="mt-1.5 border-t border-ink/10 pt-1.5 text-sec">{foot(row)}</div>}
+      {foot && <div className="mt-1.5 border-t border-deep/10 pt-1.5 text-deep/70">{foot(row)}</div>}
     </div>
   )
 }
 
 /** Filas con separadores sutiles y zebra, sin bordes gruesos. */
 export function ZebraRow({ children, i, className = '' }: { children: ReactNode; i: number; className?: string }) {
-  return <div className={`px-3 py-3 sm:px-4 ${i % 2 ? 'bg-base' : 'bg-white'} ${className}`}>{children}</div>
+  return <div className={`px-3 py-3 sm:px-4 ${i % 2 ? 'bg-cream/[.06]' : 'bg-cream/[.02]'} ${className}`}>{children}</div>
 }

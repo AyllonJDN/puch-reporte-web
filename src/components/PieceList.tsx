@@ -52,10 +52,10 @@ export default function PieceList({
 
   return (
     <Card large className="!p-0">
-      <div className="flex flex-wrap items-center gap-3 border-b border-ink/[.07] px-4 py-4 sm:px-6">
+      <div className="flex flex-wrap items-center gap-3 border-b border-line px-4 py-4 sm:px-6">
         <div className="mr-auto">
-          <h3 className="font-sans text-base font-bold text-ink">Ranking de {noun}</h3>
-          <p className="font-sans text-xs text-ter">Toca una fila para ver todas sus métricas</p>
+          <h3 className="font-sans text-base font-bold text-t1">Ranking de {noun}</h3>
+          <p className="font-sans text-xs text-t3">Toca una fila para ver todas sus métricas</p>
         </div>
         <Segmented
           label={`Ordenar ${noun}`}
@@ -69,14 +69,14 @@ export default function PieceList({
         <button
           type="button"
           onClick={() => setDesc(!desc)}
-          className="flex items-center gap-1.5 rounded-full bg-base px-3 py-2 text-sm text-sec"
+          className="flex items-center gap-1.5 rounded-full bg-cream/[.06] px-3 py-2 text-sm text-t2"
           aria-label="Invertir el orden"
         >
           <ArrowDownUp size={14} /> {desc ? 'Mayor a menor' : 'Menor a mayor'}
         </button>
       </div>
 
-      <div className="hidden grid-cols-[28px_52px_minmax(0,1fr)_240px_24px] gap-3 px-6 pb-1 pt-3 font-sans text-[10px] font-bold uppercase tracking-[.14em] text-ter md:grid">
+      <div className="hidden grid-cols-[28px_52px_minmax(0,1fr)_240px_24px] gap-3 px-6 pb-1 pt-3 font-sans text-[10px] font-bold uppercase tracking-[.14em] text-t3 md:grid">
         <span>#</span>
         <span>Fecha</span>
         <span>Pieza</span>
@@ -88,22 +88,22 @@ export default function PieceList({
         {shown.map((p, i) => {
           const isOpen = open === p.id
           return (
-            <li key={p.id} className={`border-t border-ink/[.05] ${i % 2 ? 'bg-base/60' : ''}`}>
+            <li key={p.id} className={`border-t border-line ${i % 2 ? 'bg-cream/[.04]' : ''}`}>
               <button
                 type="button"
                 aria-expanded={isOpen}
                 onClick={() => setOpen(isOpen ? null : p.id)}
                 className="grid w-full grid-cols-[28px_1fr_24px] items-center gap-x-3 gap-y-1.5 px-4 py-2.5 text-left sm:px-6 md:grid-cols-[28px_52px_minmax(0,1fr)_240px_24px]"
               >
-                <span className="font-num text-[11px] text-ter">{i + 1}</span>
-                <span className="hidden font-num text-xs font-semibold text-ink md:block">{dlong(p.f)}</span>
-                <span className="truncate font-sans text-sm text-ink">
-                  <span className="mr-2 font-num text-xs font-semibold text-ter md:hidden">{dlong(p.f)}</span>
+                <span className="font-num text-[11px] text-t3">{i + 1}</span>
+                <span className="hidden font-num text-xs font-semibold text-t1 md:block">{dlong(p.f)}</span>
+                <span className="truncate font-sans text-sm text-t1">
+                  <span className="mr-2 font-num text-xs font-semibold text-t3 md:hidden">{dlong(p.f)}</span>
                   {snip(p.texto)}
                 </span>
-                <ChevronDown size={16} className={`text-ter transition-transform md:order-last ${isOpen ? 'rotate-180' : ''}`} />
+                <ChevronDown size={16} className={`text-t3 transition-transform md:order-last ${isOpen ? 'rotate-180' : ''}`} />
                 <span className="flex items-center gap-2 max-md:col-span-2 max-md:col-start-2">
-                  <span className="relative h-2 flex-1 overflow-hidden rounded-full bg-ink/[.07]">
+                  <span className="relative h-2 flex-1 overflow-hidden rounded-full bg-deep/[.07]">
                     <motion.span
                       className="absolute inset-y-0 left-0 rounded-full"
                       style={{ background: accent }}
@@ -112,8 +112,8 @@ export default function PieceList({
                       transition={{ duration: 0.7, ease: 'easeOut' }}
                     />
                   </span>
-                  <span className="w-14 text-right font-num text-xs font-semibold text-ink">{nf(p.vistas)}</span>
-                  {p.chip && <span className="w-12 text-right font-num text-[11px] text-sec">{p.chip}</span>}
+                  <span className="w-14 text-right font-num text-xs font-semibold text-t1">{nf(p.vistas)}</span>
+                  {p.chip && <span className="w-12 text-right font-num text-[11px] text-t2">{p.chip}</span>}
                 </span>
               </button>
               <AnimatePresence initial={false}>
@@ -126,13 +126,13 @@ export default function PieceList({
                     className="overflow-hidden"
                   >
                     <div className="px-4 pb-4 pt-1 sm:px-6 md:pl-[100px]">
-                      <p className="font-sans text-sm leading-relaxed text-sec">{snip(p.texto)}</p>
+                      <p className="font-sans text-sm leading-relaxed text-t2">{snip(p.texto)}</p>
                       {p.badge && <div className="mt-2">{p.badge}</div>}
                       <dl className="mt-3 grid grid-cols-2 gap-3 sm:grid-cols-4 lg:grid-cols-8">
                         {p.metrics.map(([k, v]) => (
                           <div key={k}>
-                            <dt className="font-sans text-[11px] text-ter">{k}</dt>
-                            <dd className="font-num text-sm font-semibold text-ink">{v}</dd>
+                            <dt className="font-sans text-[11px] text-t3">{k}</dt>
+                            <dd className="font-num text-sm font-semibold text-t1">{v}</dd>
                           </div>
                         ))}
                       </dl>
@@ -149,7 +149,7 @@ export default function PieceList({
         <button
           type="button"
           onClick={() => setAll(!all)}
-          className="flex w-full items-center justify-center gap-2 border-t border-ink/[.07] py-3.5 font-sans text-sm font-bold text-ink hover:bg-base"
+          className="flex w-full items-center justify-center gap-2 border-t border-line py-3.5 font-sans text-sm font-bold text-t1 hover:bg-cream/[.06]"
         >
           {all ? `Mostrar solo los primeros ${initial}` : `Ver los ${sorted.length} ${noun}`}
           <ChevronDown size={16} className={all ? 'rotate-180' : ''} />

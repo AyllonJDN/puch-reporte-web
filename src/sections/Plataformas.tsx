@@ -33,22 +33,22 @@ export default function Plataformas() {
       alt
       num="09"
       label="Instagram frente a TikTok"
-      title="Instagram es más estable; TikTok es más explosivo y depende de una sola pieza"
+      title="Instagram es más estable; TikTok es más *explosivo* y depende de una sola pieza"
     >
       <div className="grid gap-6 lg:grid-cols-2">
         <Card large>
           <CardTitle>Comparación de plataformas</CardTitle>
           <div className="overflow-hidden rounded-xl">
-            <ZebraRow i={1} className="grid grid-cols-[1fr_88px_88px] gap-2 font-sans text-xs font-bold text-ink sm:grid-cols-[1fr_110px_110px]">
+            <ZebraRow i={1} className="grid grid-cols-[1fr_88px_88px] gap-2 font-sans text-xs font-bold text-t1 sm:grid-cols-[1fr_110px_110px]">
               <span />
               <span className="text-right">Instagram</span>
               <span className="text-right">TikTok</span>
             </ZebraRow>
             {rows.map(([k, a, b], i) => (
               <ZebraRow key={k} i={i} className="grid grid-cols-[1fr_88px_88px] items-center gap-2 sm:grid-cols-[1fr_110px_110px]">
-                <span className="font-sans text-sm text-sec">{k}</span>
-                <span className="text-right font-num text-sm font-semibold text-ink">{a}</span>
-                <span className="text-right font-num text-sm font-semibold text-ink">{b}</span>
+                <span className="font-sans text-sm text-t2">{k}</span>
+                <span className="text-right font-num text-sm font-semibold text-t1">{a}</span>
+                <span className="text-right font-num text-sm font-semibold text-t1">{b}</span>
               </ZebraRow>
             ))}
           </div>
@@ -63,10 +63,10 @@ export default function Plataformas() {
               <YAxis {...yAxis} />
               <Tooltip cursor={cursorFill} content={<Tip />} />
               <Legend {...legendProps} />
-              <Bar dataKey="ig" name="Instagram" fill={C.arena} radius={[6, 6, 0, 0]} {...anim}>
+              <Bar dataKey="ig" name="Instagram" fill={C.peri} radius={[6, 6, 0, 0]} {...anim}>
                 <LabelList dataKey="ig" {...lab} />
               </Bar>
-              <Bar dataKey="tt" name="TikTok" fill={C.lavanda} radius={[6, 6, 0, 0]} {...anim}>
+              <Bar dataKey="tt" name="TikTok" fill={C.coral} radius={[6, 6, 0, 0]} {...anim}>
                 <LabelList dataKey="tt" {...lab} />
               </Bar>
             </BarChart>

@@ -31,7 +31,7 @@ export default function TikTok() {
       id="tiktok"
       num="08"
       label="TikTok"
-      title="Un solo video explica dos tercios de las vistas; lo habitual es entre 400 y 1.000 por video"
+      title="Un solo video explica dos *tercios* de las vistas; lo habitual es entre 400 y 1.000 por video"
     >
       <Card large>
         <CardTitle>Vistas por video, en orden cronológico</CardTitle>
@@ -46,7 +46,7 @@ export default function TikTok() {
             <Tooltip cursor={cursorFill} content={<Tip head={(_l, r) => `${dlong(r.f)} · ${snip(r.texto).slice(0, 70)}`} />} />
             <Bar dataKey="vistas" name="Vistas" radius={[6, 6, 0, 0]} {...anim}>
               {data.map((d) => (
-                <Cell key={d.i} fill={d.vistas === max ? C.ink : C.lavanda} />
+                <Cell key={d.i} fill={d.vistas === max ? C.coral : C.clay} />
               ))}
             </Bar>
           </BarChart>
@@ -56,15 +56,15 @@ export default function TikTok() {
 
       <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
         <Kpi value={total} label="Vistas" sub={`${tiktok.length} videos (mediana ${nf(median(views))})`} hint="La mediana es el valor central: la mitad de los videos obtuvo menos de 739 vistas. Describe lo habitual mejor que el promedio." />
-        <Kpi value={Math.round((max / total) * 100)} suffix=" %" label="En el video del 16 de julio" sub={`${nf(max)} vistas`} tone="lavanda" hint="Un solo video concentra dos tercios del total: sin él, el canal rinde mucho menos y el resultado es difícil de repetir." />
-        <Kpi value={(inter / total) * 100} decimals={1} suffix=" %" label="Interacción sobre vistas" sub="Sin compartidos, que TikTok no expone sin sesión" tone="menta" hint="Mide cuántos espectadores reaccionan: me gusta, comentarios y guardados entre cada 100 vistas." />
-        <Kpi value={3} label="Semanas sin publicar" sub="Del 7 al 27 de septiembre · último video: 2 de octubre" tone="rosa" hint="Las pausas largas frenan al algoritmo: al volver a publicar, la cuenta parte con menos impulso." />
+        <Kpi value={Math.round((max / total) * 100)} suffix=" %" label="En el video del 16 de julio" sub={`${nf(max)} vistas`} tone="coral" hint="Un solo video concentra dos tercios del total: sin él, el canal rinde mucho menos y el resultado es difícil de repetir." />
+        <Kpi value={(inter / total) * 100} decimals={1} suffix=" %" label="Interacción sobre vistas" sub="Sin compartidos, que TikTok no expone sin sesión" tone="olive" hint="Mide cuántos espectadores reaccionan: me gusta, comentarios y guardados entre cada 100 vistas." />
+        <Kpi value={3} label="Semanas sin publicar" sub="Del 7 al 27 de septiembre · último video: 2 de octubre" tone="clay" hint="Las pausas largas frenan al algoritmo: al volver a publicar, la cuenta parte con menos impulso." />
         <Kpi value={tiktokProfile.seguidores} label="Seguidores en TikTok" sub="113 vistas por seguidor en la ventana" hint="Con una comunidad pequeña, el alcance depende del algoritmo y no de los seguidores: por eso un solo video puede disparar la cifra." />
       </div>
 
       <PieceList
         noun="videos"
-        accent={C.lavanda}
+        accent={C.coral}
         items={pieces}
         sorts={[
           { v: 'vistas', l: 'Vistas', get: (p) => p.vistas },

@@ -36,7 +36,7 @@ export default function Estadistica() {
       id="estadistica"
       num="05"
       label="Lectura estadística"
-      title="Solo las semanas 1 y 2 salen de lo normal; el resto oscila por debajo de la media del periodo"
+      title="Solo las semanas 1 y 2 salen de lo *normal*; el resto oscila por debajo de la media del periodo"
     >
       <div className="grid gap-6 lg:grid-cols-[2fr_1fr]">
         <Card large>
@@ -52,9 +52,9 @@ export default function Estadistica() {
               <Tooltip
                 content={<Tip head={(_l, row) => `Semana ${row.w.sem}`} fmt={(v) => nf(v)} />}
               />
-              <ReferenceLine y={m + sd} stroke={C.menta} strokeWidth={1.5} strokeDasharray="6 4" label={refLabel(`Media + 1σ ≈ ${nf(m + sd)}`, C.sec, 'insideTopRight')} />
-              <ReferenceLine y={m} stroke={C.arena} strokeWidth={1.5} strokeDasharray="6 4" label={refLabel(`Media ${nf(m)}`, C.sec, 'insideTopRight')} />
-              <ReferenceLine y={0} stroke={C.rosa} strokeWidth={1.5} strokeDasharray="6 4" label={refLabel('Límite inferior no aplicable', C.sec, 'insideTopLeft')} />
+              <ReferenceLine y={m + sd} stroke={C.olive} strokeWidth={1.5} strokeDasharray="6 4" label={refLabel(`Media + 1σ ≈ ${nf(m + sd)}`, C.sec, 'insideTopRight')} />
+              <ReferenceLine y={m} stroke={C.peri} strokeWidth={1.5} strokeDasharray="6 4" label={refLabel(`Media ${nf(m)}`, C.sec, 'insideTopRight')} />
+              <ReferenceLine y={0} stroke={C.clay} strokeWidth={1.5} strokeDasharray="6 4" label={refLabel('Límite inferior no aplicable', C.sec, 'insideTopLeft')} />
               <Line
                 dataKey="v"
                 name="Vistas combinadas"
@@ -72,12 +72,12 @@ export default function Estadistica() {
         </Card>
         <div className="grid content-start gap-4">
           <Card>
-            <p className="font-sans text-sm leading-relaxed text-sec">
+            <p className="font-sans text-sm leading-relaxed text-t2">
               Una carta de control marca la media y una banda de ±1 desviación estándar: lo que cae fuera de ella es una semana excepcional.
             </p>
           </Card>
-          <Kpi value={r} decimals={2} label="Correlación entre publicaciones y vistas" sub="Más piezas por semana se asocian a más vistas" tone="menta" hint="La correlación va de −1 a 1. Un valor de 0,57 indica una relación moderada y positiva; no prueba que publicar más cause más vistas." />
-          <Kpi value={below || null} label="Semanas bajo la media − 1 desviación" sub="Ninguna" tone="lavanda" hint="Marcaría una semana inusualmente baja. Como ese límite es negativo, ninguna semana puede caer por debajo." />
+          <Kpi value={r} decimals={2} label="Correlación entre publicaciones y vistas" sub="Más piezas por semana se asocian a más vistas" tone="olive" hint="La correlación va de −1 a 1. Un valor de 0,57 indica una relación moderada y positiva; no prueba que publicar más cause más vistas." />
+          <Kpi value={below || null} label="Semanas bajo la media − 1 desviación" sub="Ninguna" tone="coral" hint="Marcaría una semana inusualmente baja. Como ese límite es negativo, ninguna semana puede caer por debajo." />
         </div>
       </div>
       <Card large>
@@ -85,12 +85,12 @@ export default function Estadistica() {
         <div className="overflow-hidden rounded-xl">
           {rows.map(([k, v], i) => (
             <ZebraRow key={k} i={i} className="flex items-center justify-between gap-4">
-              <span className="font-sans text-sm text-sec">{k}</span>
-              <span className="font-num text-sm font-semibold text-ink">{v}</span>
+              <span className="font-sans text-sm text-t2">{k}</span>
+              <span className="font-num text-sm font-semibold text-t1">{v}</span>
             </ZebraRow>
           ))}
         </div>
-        <p className="mt-4 font-sans text-xs leading-relaxed text-sec">
+        <p className="mt-4 font-sans text-xs leading-relaxed text-t2">
           Media: promedio simple. Mediana: valor central, menos sensible a los picos. Desviación estándar: cuánto se alejan las semanas del promedio. Coeficiente de variación (CV): esa desviación como porcentaje del promedio; cuanto mayor, más irregular la serie.
         </p>
       </Card>

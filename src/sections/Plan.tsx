@@ -11,7 +11,7 @@ export default function Plan() {
       alt
       num="11"
       label="Planificado frente a publicado"
-      title="Lo que se escribe cada semana no coincide con lo que se publica"
+      title="Lo que se escribe cada semana no *coincide* con lo que se publica"
     >
       <Card large>
         <CardTitle>Guiones escritos y piezas publicadas por semana</CardTitle>
@@ -22,7 +22,7 @@ export default function Plan() {
             <YAxis {...yAxis} allowDecimals={false} />
             <Tooltip cursor={cursorFill} content={<Tip head={(_l, r) => `Semana ${r.sem}`} />} />
             <Legend {...legendProps} />
-            <Bar dataKey="g" name="Guiones escritos" fill={C.arena} radius={[6, 6, 0, 0]} {...anim} />
+            <Bar dataKey="g" name="Guiones escritos" fill={C.peri} radius={[6, 6, 0, 0]} {...anim} />
             <Bar dataKey="p" name="Piezas publicadas (IG + TikTok)" fill={C.ink} radius={[6, 6, 0, 0]} {...anim} />
           </BarChart>
         </ChartBox>

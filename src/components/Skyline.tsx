@@ -17,7 +17,7 @@ export default function Skyline({
   className?: string
 }) {
   const r = rng(seed)
-  const stroke = tone === 'dark' ? '#C4A882' : '#C4A882'
+  const stroke = '#C4D3F7'
   const fillO = tone === 'dark' ? 0.07 : 0.16
   const items: { x: number; w: number; h: number; kind: number }[] = []
   let x = -10

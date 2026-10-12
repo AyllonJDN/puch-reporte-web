@@ -4,9 +4,9 @@ import { C, Card, CardTitle, ChartBox, Kpi, Section, Source, Tip, grid, legendPr
 import { nf } from '../lib/stats'
 
 const tipos = [
-  { name: 'Reels', value: account90d.tipo.reels, fill: C.arena },
-  { name: 'Historias', value: account90d.tipo.historias, fill: C.menta },
-  { name: 'Publicaciones', value: account90d.tipo.publicaciones, fill: C.lavanda },
+  { name: 'Reels', value: account90d.tipo.reels, fill: C.peri },
+  { name: 'Historias', value: account90d.tipo.historias, fill: C.olive },
+  { name: 'Publicaciones', value: account90d.tipo.publicaciones, fill: C.coral },
 ]
 
 export default function Cuenta() {
@@ -18,13 +18,13 @@ export default function Cuenta() {
       alt
       num="02"
       label="Cuenta de Instagram"
-      title="La cuenta alcanza 4 espectadores por cada seguidor y casi 4 de cada 10 vistas son de personas nuevas"
+      title="La cuenta alcanza 4 espectadores por cada seguidor y casi 4 de cada 10 vistas son de personas *nuevas*"
     >
       <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
         <Kpi value={a.vistas} label="Vistas (90 días)" sub={`Instagram ${nf(a.vistasIG)} · Facebook ${nf(a.vistasFB)}`} hint="Cuenta cada reproducción, aunque la misma persona vea el contenido varias veces." />
-        <Kpi value={a.espectadores} label="Espectadores únicos" sub="4 por cada seguidor" tone="menta" hint="Personas distintas alcanzadas. Si superan a los seguidores, el contenido llega más allá de la comunidad propia." />
-        <Kpi value={a.seguidores} label="Seguidores" sub={`${nf(a.pctSeguidores, 1)} % de las vistas`} tone="lavanda" hint="Base de personas que ya eligieron seguir la cuenta; generan el 61,3 % de las vistas." />
-        <Kpi value={a.visitasPerfil} label="Visitas al perfil" sub={`${nf(a.pctNoSeguidores, 1)} % de las vistas son de no seguidores`} tone="rosa" hint="El porcentaje de no seguidores mide el descubrimiento: casi 4 de cada 10 vistas llegan a personas nuevas." />
+        <Kpi value={a.espectadores} label="Espectadores únicos" sub="4 por cada seguidor" tone="olive" hint="Personas distintas alcanzadas. Si superan a los seguidores, el contenido llega más allá de la comunidad propia." />
+        <Kpi value={a.seguidores} label="Seguidores" sub={`${nf(a.pctSeguidores, 1)} % de las vistas`} tone="coral" hint="Base de personas que ya eligieron seguir la cuenta; generan el 61,3 % de las vistas." />
+        <Kpi value={a.visitasPerfil} label="Visitas al perfil" sub={`${nf(a.pctNoSeguidores, 1)} % de las vistas son de no seguidores`} tone="clay" hint="El porcentaje de no seguidores mide el descubrimiento: casi 4 de cada 10 vistas llegan a personas nuevas." />
       </div>
       <div className="grid gap-6 lg:grid-cols-2">
         <Card large>
@@ -42,8 +42,8 @@ export default function Cuenta() {
               </PieChart>
             </ChartBox>
             <div className="pointer-events-none absolute inset-x-0 top-[38%] text-center sm:top-[40%]">
-              <p className="font-display text-3xl font-semibold text-ink">{nf(a.tipo.reels, 1)} %</p>
-              <p className="text-xs text-sec">Reels</p>
+              <p className="font-display text-3xl font-semibold text-t1">{nf(a.tipo.reels, 1)} %</p>
+              <p className="text-xs text-t2">Reels</p>
             </div>
           </div>
           <Source>Fuente: panel profesional de Instagram, 90 días.</Source>
@@ -56,7 +56,7 @@ export default function Cuenta() {
               <XAxis dataKey="tramo" {...xAxis} />
               <YAxis {...yAxis} />
               <Tooltip content={<Tip />} cursor={cursorFill} />
-              <Bar dataKey="v" name="Vistas por día" fill={C.arena} radius={[6, 6, 0, 0]} {...anim}>
+              <Bar dataKey="v" name="Vistas por día" fill={C.peri} radius={[6, 6, 0, 0]} {...anim}>
                 <LabelList dataKey="v" position="top" formatter={(v: any) => nf(v)} style={{ fontFamily: 'Inter', fontSize: 11, fill: C.ink }} />
               </Bar>
             </BarChart>

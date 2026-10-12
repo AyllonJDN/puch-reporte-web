@@ -33,7 +33,7 @@ export default function Semanal() {
       id="semanal"
       num="03"
       label="Serie semanal"
-      title="La primera semana concentra el 31 % de las vistas; desde la semana 7 el nivel se estabiliza cerca de 4.000"
+      title="La primera semana concentra el 31 % de las vistas; desde la semana 7 el nivel se *estabiliza* cerca de 4.000"
     >
       <div className="grid gap-6 lg:grid-cols-[2fr_1fr]">
         <Card large>
@@ -68,20 +68,20 @@ export default function Semanal() {
                     foot={(r) =>
                       metric === 'vistas' ? (
                         <>
-                          <p>Total: <b className="font-num text-ink">{r.a == null && r.b == null ? '—' : nf((r.a ?? 0) + (r.b ?? 0))}</b></p>
-                          <p>Publicaciones: <b className="font-num text-ink">{nf(r.w.reels + r.w.tiktoks)}</b></p>
+                          <p>Total: <b className="font-num text-t1">{r.a == null && r.b == null ? '—' : nf((r.a ?? 0) + (r.b ?? 0))}</b></p>
+                          <p>Publicaciones: <b className="font-num text-t1">{nf(r.w.reels + r.w.tiktoks)}</b></p>
                         </>
                       ) : (
-                        <p>Publicaciones: <b className="font-num text-ink">{nf(r.w.reels + r.w.tiktoks)}</b></p>
+                        <p>Publicaciones: <b className="font-num text-t1">{nf(r.w.reels + r.w.tiktoks)}</b></p>
                       )
                     }
                   />
                 }
               />
               <Legend {...legendProps} />
-              <Bar dataKey="a" name="Reels" stackId="s" fill={C.arena} radius={[6, 6, 0, 0]} {...anim} />
+              <Bar dataKey="a" name="Reels" stackId="s" fill={C.peri} radius={[6, 6, 0, 0]} {...anim} />
               {metric !== 'inter' && (
-                <Bar dataKey="b" name="TikTok" stackId="s" fill={C.lavanda} radius={[6, 6, 0, 0]} {...anim} />
+                <Bar dataKey="b" name="TikTok" stackId="s" fill={C.coral} radius={[6, 6, 0, 0]} {...anim} />
               )}
               {metric === 'vistas' && (
                 <Line
@@ -103,8 +103,8 @@ export default function Semanal() {
         </Card>
         <div className="grid content-start gap-4">
           <Kpi value={avg} label="Vistas promedio por semana" sub={`Mediana S3 a S12: ${nf(med312)}`} hint="Suma de vistas de las 12 semanas dividida entre 12. La mediana es menor porque las semanas 1 y 2 elevan el promedio." />
-          <Kpi value={lr.slope} label="Tendencia lineal, vistas por semana" sub={`R² = ${nf(lr.r2, 2)}`} tone="rosa" hint="Es la pendiente de la recta que mejor resume la serie: cada semana pierde en promedio unas 2.356 vistas. R² = 0,51 significa que la recta explica la mitad de la variación; el resto es movimiento propio de cada semana." />
-          <Kpi value={over} label="Semanas sobre la media + 1 desviación" sub="S1 y S2" tone="lavanda" hint="La desviación estándar mide cuánto se alejan las semanas del promedio. Superar promedio + 1 desviación marca una semana fuera de lo normal." />
+          <Kpi value={lr.slope} label="Tendencia lineal, vistas por semana" sub={`R² = ${nf(lr.r2, 2)}`} tone="clay" hint="Es la pendiente de la recta que mejor resume la serie: cada semana pierde en promedio unas 2.356 vistas. R² = 0,51 significa que la recta explica la mitad de la variación; el resto es movimiento propio de cada semana." />
+          <Kpi value={over} label="Semanas sobre la media + 1 desviación" sub="S1 y S2" tone="coral" hint="La desviación estándar mide cuánto se alejan las semanas del promedio. Superar promedio + 1 desviación marca una semana fuera de lo normal." />
         </div>
       </div>
     </Section>

@@ -34,14 +34,14 @@ export default function Interaccion() {
       alt
       num="07"
       label="Interacción"
-      title="La interacción es de 1,40 % sobre las vistas; los compartidos aportan 21 % y son la señal más valiosa"
+      title="La interacción es de 1,40 % sobre las vistas; los *compartidos* aportan 21 % y son la señal más valiosa"
     >
       <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-5">
         <Kpi value={tot} label="Interacciones" sub="1,40 % de las vistas" className="sm:col-span-2 lg:col-span-1" hint="Suma de me gusta, comentarios, guardados y compartidos. La tasa de 1,40 % es interacciones divididas entre vistas." />
-        <Kpi value={likes} label="Me gusta" tone="menta" hint="Señal de agrado: es la más fácil de dar y la menos comprometida." />
-        <Kpi value={com} label="Comentarios" tone="lavanda" hint="Señal de conversación: el tema generó interés suficiente para escribir." />
-        <Kpi value={guard} label="Guardados" tone="menta" hint="Señal de utilidad: la persona quiere volver a ver el contenido." />
-        <Kpi value={comp} label="Compartidos" sub={`${nf(Math.round((comp / tot) * 100))} % del total`} tone="rosa" hint="La señal más valiosa: cada compartido lleva el reel a personas nuevas." />
+        <Kpi value={likes} label="Me gusta" tone="olive" hint="Señal de agrado: es la más fácil de dar y la menos comprometida." />
+        <Kpi value={com} label="Comentarios" tone="coral" hint="Señal de conversación: el tema generó interés suficiente para escribir." />
+        <Kpi value={guard} label="Guardados" tone="olive" hint="Señal de utilidad: la persona quiere volver a ver el contenido." />
+        <Kpi value={comp} label="Compartidos" sub={`${nf(Math.round((comp / tot) * 100))} % del total`} tone="clay" hint="La señal más valiosa: cada compartido lleva el reel a personas nuevas." />
       </div>
 
       <Card large>
@@ -56,10 +56,10 @@ export default function Interaccion() {
             <YAxis {...yAxis} />
             <Tooltip cursor={cursorFill} content={<Tip head={(_l, row) => `Semana ${row.w.sem}`} />} />
             <Legend {...legendProps} />
-            <Bar dataKey="likes" name="Me gusta" stackId="i" fill={C.arena} {...anim} />
-            <Bar dataKey="com" name="Comentarios" stackId="i" fill={C.lavanda} {...anim} />
-            <Bar dataKey="guard" name="Guardados" stackId="i" fill={C.menta} {...anim} />
-            <Bar dataKey="comp" name="Compartidos" stackId="i" fill={C.rosa} radius={[6, 6, 0, 0]} {...anim} />
+            <Bar dataKey="likes" name="Me gusta" stackId="i" fill={C.peri} {...anim} />
+            <Bar dataKey="com" name="Comentarios" stackId="i" fill={C.coral} {...anim} />
+            <Bar dataKey="guard" name="Guardados" stackId="i" fill={C.olive} {...anim} />
+            <Bar dataKey="comp" name="Compartidos" stackId="i" fill={C.clay} radius={[6, 6, 0, 0]} {...anim} />
           </BarChart>
         </ChartBox>
         <Source>Fuente: estadísticas individuales de cada reel. La semana 7 no tuvo reels y se omite.</Source>
@@ -80,7 +80,7 @@ export default function Interaccion() {
                 cursor={{ strokeDasharray: '3 3' }}
                 content={<Tip head={(_l, row) => (row.f ? `${dlong(row.f)} · ${snip(row.texto).slice(0, 60)}` : 'Tendencia')} />}
               />
-              <Scatter name="Reel" data={dots} fill={C.arena} fillOpacity={0.7} {...anim} />
+              <Scatter name="Reel" data={dots} fill={C.peri} fillOpacity={0.7} {...anim} />
               <Scatter
                 name="Tendencia"
                 data={trend}
@@ -97,13 +97,13 @@ export default function Interaccion() {
         </Card>
         <Card large>
           <CardTitle>Reels más eficientes</CardTitle>
-          <p className="-mt-2 mb-4 text-sm text-sec">Tasa de interacción sobre vistas</p>
+          <p className="-mt-2 mb-4 text-sm text-t2">Tasa de interacción sobre vistas</p>
           <ul className="space-y-5">
             {top.map((t) => (
               <li key={t.f}>
-                <p className="font-display text-3xl font-semibold text-ink">{pct(rate(t), 2)}</p>
-                <p className="mt-1 font-num text-xs text-ter">{dlong(t.f)}</p>
-                <p className="font-sans text-sm text-ink">{short[t.f] ?? snip(t.texto)}</p>
+                <p className="font-display text-3xl font-semibold text-t1">{pct(rate(t), 2)}</p>
+                <p className="mt-1 font-num text-xs text-t3">{dlong(t.f)}</p>
+                <p className="font-sans text-sm text-t1">{short[t.f] ?? snip(t.texto)}</p>
               </li>
             ))}
           </ul>

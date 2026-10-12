@@ -1,57 +1,112 @@
 @import "tailwindcss";
 
 @theme {
-  --color-base: #F5F0EB;
-  --color-ink: #1A1A2E;
-  --color-arena: #C4A882;
-  --color-menta: #A8D5BA;
-  --color-rosa: #F2A7A7;
-  --color-lavanda: #B8C8E8;
-  --color-sec: #5C5C5C;
-  --color-ter: #9A9A9A;
-  --color-sand: #E4DDD3;
-  --font-display: 'Playfair Display', Georgia, serif;
-  --font-sans: 'DM Sans', system-ui, sans-serif;
-  --font-num: 'Inter', system-ui, sans-serif;
-  --shadow-card: 0 4px 24px rgba(0, 0, 0, 0.08);
+  --color-grape: #470B24;
+  --color-deep: #2A0615;
+  --color-wine: #3D1717;
+  --color-coral: #F47358;
+  --color-peri: #C4D3F7;
+  --color-olive: #B9AE6F;
+  --color-clay: #9C4A44;
+  --color-cream: #FFFAF5;
+  --font-display: 'Cormorant Garamond', Georgia, serif;
+  --font-sans: 'Hanken Grotesk', system-ui, sans-serif;
+  --font-num: 'Hanken Grotesk', system-ui, sans-serif;
+}
+
+/* Colores de texto según el fondo: las tarjetas son siempre oscuras; la hoja clara invierte. */
+@theme inline {
+  --color-t1: var(--t1);
+  --color-t2: var(--t2);
+  --color-t3: var(--t3);
+  --color-line: var(--line);
+  --color-accent: var(--accent);
+}
+
+:root {
+  --t1: #FFFAF5; --t2: rgba(255,250,245,.72); --t3: rgba(255,250,245,.52);
+  --line: rgba(196,211,247,.16); --accent: #C4D3F7;
+}
+.tone-dark, .tone-grape, .card, .tip-dark {
+  --t1: #FFFAF5; --t2: rgba(255,250,245,.72); --t3: rgba(255,250,245,.52);
+  --line: rgba(196,211,247,.16); --accent: #C4D3F7;
+  color: var(--t1);
+}
+.tone-light {
+  --t1: #2A0615; --t2: rgba(42,6,21,.74); --t3: rgba(42,6,21,.56);
+  --line: rgba(71,11,36,.16); --accent: #F47358;
+  color: var(--t1);
+}
+.card { --accent: #C4D3F7; }
+.tip { --t1: #2A0615; --t2: rgba(42,6,21,.7); --t3: rgba(42,6,21,.5); color: #2A0615; }
+
+.tone-dark {
+  background:
+    radial-gradient(60% 50% at 88% 18%, rgba(196,211,247,.10), transparent 60%),
+    radial-gradient(60% 50% at 8% 95%, rgba(244,115,88,.10), transparent 60%),
+    #2A0615;
+}
+.tone-grape {
+  background:
+    radial-gradient(60% 50% at 88% 18%, rgba(196,211,247,.10), transparent 60%),
+    radial-gradient(60% 50% at 8% 95%, rgba(244,115,88,.10), transparent 60%),
+    #470B24;
+}
+.tone-light { background: linear-gradient(180deg, #FFFAF5 0%, #E6ECFC 100%); }
+
+.card {
+  background: linear-gradient(135deg, rgba(255,255,255,.075), rgba(255,255,255,.025));
+  border: 1px solid rgba(196,211,247,.14);
+  border-radius: 22px;
+  box-shadow: 0 18px 40px -24px rgba(0,0,0,.55);
+}
+.tone-light .card {
+  background:
+    radial-gradient(circle at 100% 0%, rgba(244,115,88,.20), transparent 45%),
+    linear-gradient(135deg, #531030, #3A0A21);
 }
 
 html { scroll-behavior: smooth; }
-/* Cifras alineadas (lining + tabular) para lectura tipo terminal de datos */
-.font-display, .font-num, .tnum { font-feature-settings: 'lnum' 1, 'tnum' 1; font-variant-numeric: lining-nums tabular-nums; }
-.grid-dots {
-  background-image: radial-gradient(rgba(196,168,130,.22) 1px, transparent 1px);
-  background-size: 28px 28px;
-}
-.grid-lines {
-  background-image:
-    linear-gradient(rgba(26,26,46,.045) 1px, transparent 1px),
-    linear-gradient(90deg, rgba(26,26,46,.045) 1px, transparent 1px);
-  background-size: 56px 56px;
-}
-@keyframes marquee { from { transform: translateX(0); } to { transform: translateX(-50%); } }
-.marquee { animation: marquee 48s linear infinite; }
-.marquee:hover { animation-play-state: paused; }
-@media (prefers-reduced-motion: reduce) { .marquee { animation: none; } }
 body {
   margin: 0;
-  background: #F5F0EB;
-  color: #1A1A2E;
+  background: #2A0615;
+  color: #FFFAF5;
   font-family: var(--font-sans);
   overflow-x: clip;
   -webkit-font-smoothing: antialiased;
 }
-:focus-visible { outline: 2px solid #C4A882; outline-offset: 3px; border-radius: 4px; }
+/* Cormorant usa cifras old-style: siempre alinear */
+.font-display { font-variant-numeric: lining-nums; font-feature-settings: "lnum" 1; font-weight: 400; }
+.font-display.font-light { font-weight: 300; }
+.font-num, .tnum { font-variant-numeric: tabular-nums; }
+
+.grain::after {
+  content: ''; position: absolute; inset: 0; pointer-events: none; opacity: .10;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+}
+
+:focus-visible { outline: 2px solid #F47358; outline-offset: 3px; border-radius: 4px; }
 .recharts-wrapper, .recharts-surface { outline: none; }
-.recharts-bar-rectangle:hover { opacity: 0.8; }
+.recharts-bar-rectangle:hover { opacity: .85; }
 select { font-family: inherit; }
+select option { background: #FFFAF5; color: #2A0615; }
+
+@keyframes marquee { from { transform: translateX(0); } to { transform: translateX(-50%); } }
+@keyframes marquee-rev { from { transform: translateX(-50%); } to { transform: translateX(0); } }
+.marquee { animation: marquee 48s linear infinite; }
+.marquee-fast { animation: marquee 32s linear infinite; }
+.marquee-rev { animation: marquee-rev 48s linear infinite; }
+.marquee:hover, .marquee-fast:hover, .marquee-rev:hover { animation-play-state: paused; }
+@keyframes pulse-ring { 0% { transform: scale(.8); opacity: .8; } 100% { transform: scale(1.9); opacity: 0; } }
+.pulse-ring { animation: pulse-ring 2.2s ease-out infinite; }
 
 @media (prefers-reduced-motion: reduce) {
   html { scroll-behavior: auto; }
+  .marquee, .marquee-fast, .marquee-rev, .pulse-ring { animation: none; }
 }
 
 @media print {
   body { background: #fff; }
   nav, .no-print { display: none !important; }
-  section { break-inside: avoid; padding-top: 24px !important; padding-bottom: 24px !important; background: #fff !important; color: #1A1A2E !important; }
+  section { break-inside: avoid; margin-top: 0 !important; border-radius: 0 !important; }
 }
