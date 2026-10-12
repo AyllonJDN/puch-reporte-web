@@ -2,12 +2,6 @@ import { Bar, BarChart, CartesianGrid, Legend, Tooltip, XAxis, YAxis } from 'rec
 import { weekly } from '../data/report'
 import { C, Card, CardTitle, ChartBox, Section, Source, Tip, cursorFill, grid, legendProps, useAnim, xAxis, yAxis } from '../components/ui'
 
-const notes = [
-  { big: '0', t: 'coincidencias', d: 'Los 17 guiones con fecha en el calendario (3 ago a 4 sep) no se publicaron en su fecha.' },
-  { big: '0', t: 'registros de video', d: 'La sección Videos del portal tiene 0 registros en las 12 semanas.' },
-  { big: '4', t: 'guiones duplicados', d: 'Tienen el texto copiado de otro (marcadores de posición sin redactar): guiones 32, 37, 43 y 48 del listado.' },
-]
-
 export default function Plan() {
   const anim = useAnim()
   const data = weekly.map((w) => ({ label: `S${w.sem}`, g: w.guiones, p: w.reels + w.tiktoks, sem: w.sem }))
@@ -15,7 +9,7 @@ export default function Plan() {
     <Section
       id="plan"
       alt
-      num="12"
+      num="11"
       label="Planificado frente a publicado"
       title="Lo que se escribe cada semana no coincide con lo que se publica"
     >
@@ -34,15 +28,6 @@ export default function Plan() {
         </ChartBox>
         <Source>Fuente: portal de contenido The Framework, panel de Instagram y perfil de TikTok.</Source>
       </Card>
-      <div className="grid gap-4 md:grid-cols-3">
-        {notes.map((n) => (
-          <Card key={n.d} large>
-            <p className="font-display text-5xl font-semibold text-ink">{n.big}</p>
-            <p className="mt-2 font-sans text-sm font-bold text-ink">{n.t}</p>
-            <p className="mt-2 font-sans text-sm leading-relaxed text-sec">{n.d}</p>
-          </Card>
-        ))}
-      </div>
     </Section>
   )
 }

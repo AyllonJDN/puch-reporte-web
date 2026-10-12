@@ -10,7 +10,7 @@ const recs = [
 
 export default function Recomendaciones() {
   return (
-    <Section id="recomendaciones" num="14" label="Recomendaciones" title="Cuatro acciones para sostener los resultados de las próximas 12 semanas" dark>
+    <Section id="recomendaciones" num="13" label="Recomendaciones" title="Cuatro acciones para sostener los resultados de las próximas 12 semanas" dark>
       <motion.div
         className="grid gap-4 md:grid-cols-2"
         initial="hidden"

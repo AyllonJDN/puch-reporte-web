@@ -33,7 +33,7 @@ export default function Guiones() {
   return (
     <Section
       id="guiones"
-      num="11"
+      num="10"
       label="Guiones del portal"
       title="De 49 guiones escritos, 15 tienen una publicación identificable; ninguno de los 23 en revisión se publicó"
     >

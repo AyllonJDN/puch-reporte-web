@@ -13,7 +13,6 @@ export const NAV: { id: string; l: string }[] = [
   { id: 'interaccion', l: 'Interacción' },
   { id: 'tiktok', l: 'TikTok' },
   { id: 'plataformas', l: 'Plataformas' },
-  { id: 'historias', l: 'Historias' },
   { id: 'guiones', l: 'Guiones' },
   { id: 'plan', l: 'Planificado' },
   { id: 'cruce', l: 'Con y sin guion' },
@@ -25,7 +24,7 @@ const GROUPS: { l: string; ids: string[] }[] = [
   { l: 'Cuenta', ids: ['cuenta'] },
   { l: 'Semanal', ids: ['semanal', 'historial', 'estadistica'] },
   { l: 'Reels', ids: ['reels', 'interaccion'] },
-  { l: 'TikTok', ids: ['tiktok', 'plataformas', 'historias'] },
+  { l: 'TikTok', ids: ['tiktok', 'plataformas'] },
   { l: 'Guiones', ids: ['guiones', 'plan', 'cruce'] },
   { l: 'Recomendaciones', ids: ['recomendaciones'] },
 ]

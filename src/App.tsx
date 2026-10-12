@@ -11,7 +11,6 @@ import Reels from './sections/Reels'
 import Interaccion from './sections/Interaccion'
 import TikTok from './sections/TikTok'
 import Plataformas from './sections/Plataformas'
-import Historias from './sections/Historias'
 import Guiones from './sections/Guiones'
 import Plan from './sections/Plan'
 import Cruce from './sections/Cruce'
@@ -35,7 +34,6 @@ export default function App() {
         <Interaccion />
         <TikTok />
         <Plataformas />
-        <Historias />
         <Guiones />
         <Plan />
         <Cruce />

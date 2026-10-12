@@ -41,7 +41,7 @@ export default function Cruce() {
   return (
     <Section
       id="cruce"
-      num="13"
+      num="12"
       label="Con guion frente a sin guion"
       title="Los reels con guion obtienen más interacción por vista; el alcance depende más del tema y del momento"
     >
@@ -50,7 +50,7 @@ export default function Cruce() {
         {chart('mediana', 'Vistas medianas por reel', 'Barras de vistas medianas por reel según grupo: con guion, sin guion y listados de propiedad', 0)}
       </div>
       <Source>En TikTok los listados incluyen el video más visto, con 34.800 vistas.</Source>
-      <div className="grid gap-4 md:grid-cols-3">
+      <div className="grid gap-4 md:grid-cols-2">
         <Kpi
           text={groups.map((g) => g.n).join(' · ')}
           label="Reels con guion · sin guion · listados"
@@ -60,11 +60,6 @@ export default function Cruce() {
         <Card>
           <p className="font-sans text-sm leading-relaxed text-sec">
             Sin guion: opiniones, reacciones, colaboraciones y la serie de septiembre; el reel más visto (13.511) pertenece a este grupo.
-          </p>
-        </Card>
-        <Card>
-          <p className="font-sans text-sm leading-relaxed text-sec">
-            Las coincidencias «probables» son inferencias por tema: el portal no comparte identificador con las plataformas.
           </p>
         </Card>
       </div>
